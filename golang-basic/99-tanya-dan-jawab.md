@@ -17,4 +17,5 @@ Jika ingin melakukan setting manual environment maka perlu lakukan ini
   export PATH="$HOME/Documents/go/bin:$PATH"
   ```
 
-## 
+## Jadi apa sih nanti programmer backend itu?
+Bisa dilihat nih untuk backend programmer itu akan bagaimana prospect ke depannya. Bisa dilihat disini https://github.com/kamranahmedse/developer-roadmap. Khusus untuk golang developer bisa dilihat [disini](https://roadmap.sh/golang)
