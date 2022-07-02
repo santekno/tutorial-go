@@ -383,3 +383,161 @@ Pada sesi ini akan kita contohkan bagaimana penggunaan package `assert`. Silakan
 PASS
 ok      github.com/santekno/tabung      0.326s
 ```
+
+## Unit Test Menggunakan Mocking
+Melakukan unit test dengan cara mocking ini biasanya digunakan jika sudah beberapa fungsi yang dilakukan dengan format `interface` sehingga kita bisa asumsikan jika memanggil fungsi `interface` tersebut kita meyakini bahwa harus menghasilkan program yang benar. 
+
+Saat ini untuk membuat mocking kita menggunakan library dari [github.com/matryer/moq](github.com/matryer/moq). Jika belum ada library tersebut kita bisa download terlebih dahulu dengan perintah dibawah ini.
+```bash
+$ go install github.com/matryer/moq@latest
+```
+
+Berikut kita akan coba membuat suatu project yang memiliki fungsi interface dibawah ini.
+```go
+package main
+
+import "fmt"
+
+type User struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+//go:generate moq -out main_mock_test.go . UserRepositoryInterface
+type UserRepositoryInterface interface {
+	GetAllUsers() ([]User, error)
+}
+
+type UserService struct {
+	UserRepositoryInterface
+}
+
+func (s UserService) GetUser() ([]User, error) {
+	users, _ := s.UserRepositoryInterface.GetAllUsers()
+	for i := range users {
+		users[i].Password = "*****"
+	}
+	return users, nil
+}
+
+type UserRepository struct{}
+
+func (r UserRepository) GetAllUsers() ([]User, error) {
+	users := []User{
+		{"real", "real"},
+		{"real2", "real2"},
+	}
+	return users, nil
+}
+
+func main() {
+	repository := UserRepository{}
+	service := UserService{repository}
+	users, _ := service.GetUser()
+	fmt.Println(users)
+}
+```
+
+Lalu lanjut dengan cara membuat unit test bisa dilihat dibawah ini
+```go
+package main
+
+import (
+	"fmt"
+	"reflect"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
+)
+
+type UserRepositoryMock struct {
+	mock.Mock
+}
+
+func (r UserRepositoryMock) GetAllUsers() ([]User, error) {
+	args := r.Called()
+	users := []User{
+		{"mock", "*****"},
+	}
+	return users, args.Error(1)
+}
+
+func TestService_GetUser(t *testing.T) {
+	repository := UserRepositoryMock{}
+	repository.On("GetAllUsers").Return([]User{}, nil)
+
+	service := UserService{repository}
+	users, _ := service.GetUser()
+	for i := range users {
+		assert.Equal(t, users[i].Password, "*****", "user password must be encrypted")
+	}
+	fmt.Println(users)
+}
+
+func TestUserService_GetUser(t *testing.T) {
+	type fields struct {
+		UserRepositoryInterface UserRepositoryInterface
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		want    []User
+		wantErr bool
+	}{
+		{
+			name: "case ambil data user",
+			fields: fields{
+				UserRepositoryInterface: UserRepositoryMock{},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			s := UserService{
+				UserRepositoryInterface: tt.fields.UserRepositoryInterface,
+			}
+			got, err := s.GetUser()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UserService.GetUser() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UserService.GetUser() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+```
+
+## Catatan Perintah Test
+### Perintah untuk melihat coverage dari unit test dalam projek
+```bash
+➜  tabung git:(main) ✗ go test -coverprofile=coverage.out
+PASS
+coverage: 100.0% of statements
+ok      github.com/santekno/tabung      0.750s
+```
+
+### Perintah untuk melihat code mana saja yang sudah cover unit test
+```bash
+➜  tabung git:(main) ✗ go tool cover -html=coverage.out
+```
+Maka hasilnya akan `generate` html yang berupa visualiasi dari unit test yg sudah tercover ataupun yang belum
+
+## Latihan
+Buatlah unit test dari fungsi polindrome ini
+```go
+func IsPalindrome(text string) bool {
+   if len(text) <= 1 {
+      return true
+   }
+   if len(text) == 2 && text[0] == text[1] {
+      return true
+   }
+   if text[0] != text[len(text)-1] {
+      return false
+   }
+   return IsPalindrome(text[1 : len(text)-1])
+}
+```
