@@ -11,7 +11,7 @@ Download terlebih dahulu golang library yang ada di website [Golang](https://gol
   ```
 
 ## Windows
-* Pilih package dan download sesuai dengan versi Windows yg mendukung.
+* Pilih package dan download sesuai dengan versi Windows yang mendukung.
 * Setelah download file berekstensi .exe, lakukan install seperti melakukan instalasi aplikasi lain. Biasanya file akan disimpan di folder `Program File` atau `Program File (x86)`
 * Buka terminal atau `cmd`.
 

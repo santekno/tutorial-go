@@ -62,7 +62,7 @@ func f2() int {
 ```
 
 ## Multiple Returning
-Jika dalam pemrograman yang lain hanya bisa membalikan hasil cuma satu data tetapi dalam Go, memiliki keunikan tersendiri yaitu kita bisa melakukan output `return` yg lebih dari satu. Agar lebih bisa dipahami lihat dibawah ini.
+Jika dalam pemrograman yang lain hanya bisa membalikan hasil cuma satu data tetapi dalam Go, memiliki keunikan tersendiri yaitu kita bisa melakukan output `return` yang lebih dari satu. Agar lebih bisa dipahami lihat dibawah ini.
 ```go
 package main
 

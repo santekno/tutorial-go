@@ -1,4 +1,4 @@
-module example.com/hello
+module example.com/hello/v2
 
 go 1.17
 

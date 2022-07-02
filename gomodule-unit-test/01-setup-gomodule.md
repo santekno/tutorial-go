@@ -6,7 +6,7 @@ Go modules merupakan manajemen dependensi resmi untuk Go. Modules ini diperkenal
 
 Modules digunakan untuk menginisialisasi sebuah projek, sekaligus melakukan manajemen terhadap `3rd party` atau `library` lain yang dipergunakan.
 
-Modules penggunaannya adalah lewat `CLI`. Dan jika kista sudah sukses meng-`install` Go, maka otomatis bisa mempergunakan `Go Modules`.
+Modules penggunaannya adalah lewat `CLI`. Dan jika kita sudah sukses meng-`install` Go, maka otomatis bisa mempergunakan `Go Modules`.
 
 > `Modules` atau `Module` di sini merupakan istilah untuk project ya. Jadi jangan bingung.
 
@@ -146,3 +146,107 @@ PASS
 ok      example.com/hello       0.130s
 ```
 > Perhatikan perintah eksplisit `"@v1.3.1"` pada argumen `"go get"`. Pada umumnya, setiap argumen yang dikirim ke `"go get"` dapat menerima versi eksplisit; jika kosong maka dianggap sebagai `"@latest"`, yang berarti akan diubah ke versi terakhir seperti yang telah dijelaskan sebelumnya.
+
+## Menambahkan Sebuah Dependensi dengan versi Mayor
+Mari kita tambahkan satu fungsi pada program yang sudah kita buat yaitu di folder `hello` sebagai berikut:
+```go
+package hello
+
+import (
+	"rsc.io/quote"
+	quoteV3 "rsc.io/quote/v3"
+)
+
+func Hello() string {
+	return quote.Hello()
+}
+
+func Proverb() string {
+	return quoteV3.Concurrency()
+}
+```
+dalam hal ini kita menambahkan fungsi dari dependency yang sama tetapi menggunakan versi 3. Pada versi 3 ini, kita menggunakan library `quote` yang berhubungan dengan cuncurrency Go. Nanti pada sesi selanjutnya akan kita bahas.
+
+Kemudian kita tambah sebuah berkas pengujian "hello_test.go":
+
+```go
+func TestProverb(t *testing.T) {
+	want := "Concurrency is not parallelism."
+	if got := Proverb(); got != want {
+		t.Errorf("Proverb() = %q, want %q", got, want)
+	}
+}
+```
+setelah itu kita jalankan kembali perintah ini.
+```bash
+go test
+PASS
+ok      example.com/hello       0.890s
+```
+Maka skrng kita telah menggunakan 1 dependency dengan 2 versi yang berbeda yaitu `rsc.io/quote` dan `rsc.io/quote/v3`.
+
+Pada go kita memperbolehkan pada saat `build` menggunakan beberapa versi mayor. Misalkan pada program yang telah kita buat, itu memiliki 2 versi yang berjalan bersamaan dalam satu projek. Aturan dalam go versi ini biasanya menggunakan path yang berbeda agar jika dependency ini saling keterkaitan dengan module lain bisa lebih mudah untuk melakukan migrasi-nya.
+
+## Memperbarui dependensi ke versi mayor
+Setelah kita menggunakan fungsi yang ada di versi mayor terbaru, maka saatnya fungsi yang lain juga kita harus melakukan migrasi atau `update` agar lebih mengikuti dependecy yang terbaru. Biasanya dependency yang terbaru memiliki informasi yang lengkap, perbaikan `bug` atau restruktur fungsi agar lebih bisa digunakan untuk fungsi umum dalam hal ini `general`.
+
+Baiklah, pada program sebelumnya kita akan merubah dependency dari `v1.5.3` ke dalam versi mayor 3. Berikut dependency yang perlu kita perbaharui.
+```go
+package hello
+
+import (
+	 "rsc.io/quote/v3"
+)
+
+func Hello() string {
+	return quote.HelloV3()
+}
+
+func Proverb() string {
+	return quote.Concurrency()
+}
+```
+
+Dengan perubahan ini, maka tidak perlu lagi memberi nama pada impor dan memiliki 2 import. 
+
+## Menghapus dependensi yang sudah tidak digunakan
+
+Jika program telah berjalan dengan baik dan tidak ada masalah saat dijalankan, maka kita perlu juga untuk membersihkan beberapa dependency yang tidak terpakai dengan cara perinah `go mod tidy` dan `go mod vendor` untuk memastikan dependency yang terdaftar sudah sesuai.
+
+```bash
+➜  hello git:(main) ✗ cat go.mod 
+module example.com/hello
+
+go 1.17
+
+require rsc.io/quote/v3 v3.1.0
+
+require (
+        golang.org/x/text v0.3.7 // indirect
+        rsc.io/sampler v1.3.1 // indirect
+)
+```
+
+Maka, bisa kita lihat dependency untuk `quote` versi terlama sudah terhapus karena sudah tidak terpakai lagi dalam program ini.
+
+### Catatan
+Perintah untuk menginisialisasi program menggunakan gomodule
+```bash
+go mod init <nama-proejek>
+```
+
+Perintah melakukan `build` program sekaligus untuk melakukan `test`.
+```bash
+go build 
+go test
+```
+
+Perintah untuk memperbarui dependency
+```bash
+go get <path-package-dependency>
+```
+
+Perintah untuk menghapus dependency yang tidak terpakai
+```bash
+go mod tidy
+```

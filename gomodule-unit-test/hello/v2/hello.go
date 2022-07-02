@@ -5,7 +5,7 @@ import (
 )
 
 func Hello() string {
-	return quote.HelloV3()
+	return quote.HelloV3() + quote.GlassV3()
 }
 
 func Proverb() string {

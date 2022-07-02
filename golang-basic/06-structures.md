@@ -30,7 +30,7 @@ $ go run golang-basic/06-structure/perulangan-angka.go
 
 
 ## If ... else ...
-Kondisional pada umumnya biasanya menggunakan `if ... else`. Dan hematnya code golang itu tidak perlu ada kurung tutup dan kurung buka yg biasanya program yang lain harus menggunakan itu. Contoh program kondisional seperti ini
+Kondisional pada umumnya biasanya menggunakan `if ... else`. Dan hematnya code golang itu tidak perlu ada kurung tutup dan kurung buka yang biasanya program yang lain harus menggunakan itu. Contoh program kondisional seperti ini
 ```go
 package main
 
@@ -143,7 +143,7 @@ atau bisa juga menggunakan `make`
 ```go
   x := make([]float64, 5)
 ```
-Slice ini bisa kita gunakan untuk array yang bisa kita tambah kurang sesuai dengan kebutuhan kita. misalkan kita definisikan 5 tetapi ingin menambahkan lagi dibelakang data yg ke 5 itu, maka lebih mudah menggunakan slice. Contoh program dibawah ini.
+Slice ini bisa kita gunakan untuk array yang bisa kita tambah kurang sesuai dengan kebutuhan kita. misalkan kita definisikan 5 tetapi ingin menambahkan lagi dibelakang data yang ke 5 itu, maka lebih mudah menggunakan slice. Contoh program dibawah ini.
 ```go
 package main
 

@@ -1,7 +1,7 @@
 # Tanya dan Jawab
 
-## Apa yg dimaksud dengan GOPATH dan GOROOT dan ini harus kita set?
-`GOPATH` adalah folder yg ditunjuk oleh golang library sebagai tempat kerja atau kita sering sebut dengan `workspace`
+## Apa yang dimaksud dengan GOPATH dan GOROOT dan ini harus kita set?
+`GOPATH` adalah folder yang ditunjuk oleh golang library sebagai tempat kerja atau kita sering sebut dengan `workspace`
 `GOROOT` adalah pointer/path folder yang menunjukkan binary dari golang biasanya jika install default kita akan mengarah ke folder `/usr/local/bin`
 Harus diset terlebih dahulu, tetapi jika kamu melakukan instalasi menggunakan package biasanya set ini tidak perlu karena sudah dibantu oleh installer untuk melakuakn setting-nya.
 
