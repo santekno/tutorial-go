@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"testing"
@@ -46,8 +47,36 @@ func TestUserService_GetUser(t *testing.T) {
 		{
 			name: "case ambil data user",
 			fields: fields{
-				UserRepositoryInterface: UserRepositoryMock{},
+				UserRepositoryInterface: &UserRepositoryInterfaceMock{
+					GetAllUsersFunc: func() ([]User, error) {
+						return []User{
+							{
+								Username: "ihsan",
+								Password: "*****",
+							},
+						}, nil
+					},
+				},
 			},
+			want: []User{
+				{
+					Username: "ihsan",
+					Password: "*****",
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "case saat ambil data error",
+			fields: fields{
+				UserRepositoryInterface: &UserRepositoryInterfaceMock{
+					GetAllUsersFunc: func() ([]User, error) {
+						return nil, errors.New("error")
+					},
+				},
+			},
+			want:    nil,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -62,6 +91,36 @@ func TestUserService_GetUser(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("UserService.GetUser() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestUserRepository_GetAllUsers(t *testing.T) {
+	tests := []struct {
+		name    string
+		r       UserRepository
+		want    []User
+		wantErr bool
+	}{
+		{
+			name: "get all data user",
+			want: []User{
+				{"real", "real"},
+				{"real2", "real2"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := UserRepository{}
+			got, err := r.GetAllUsers()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("UserRepository.GetAllUsers() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("UserRepository.GetAllUsers() = %v, want %v", got, tt.want)
 			}
 		})
 	}

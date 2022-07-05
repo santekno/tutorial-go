@@ -17,7 +17,11 @@ type UserService struct {
 }
 
 func (s UserService) GetUser() ([]User, error) {
-	users, _ := s.UserRepositoryInterface.GetAllUsers()
+	users, err := s.UserRepositoryInterface.GetAllUsers()
+	if err != nil {
+		return nil, err
+	}
+
 	for i := range users {
 		users[i].Password = "*****"
 	}
