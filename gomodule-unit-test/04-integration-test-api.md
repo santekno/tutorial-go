@@ -146,6 +146,7 @@ func (c *MathClient) APISum(i, j int) (int, error) {
 
 Method `APISum` ini akan kita gunakan untuk mengakses `http` API yang sudah kita buat sebagai main server yang akan kita test menggunakan integration test ini.
 
+## Membuat Struct Client
 Buat struct untuk struktur API dan responsenya seperti ini.
 ```go
 type MathClient struct {
@@ -157,6 +158,7 @@ type AddResult struct {
 	Result int `json:"result"`
 }
 ```
+## Membuat Method Akses API Sum
 lalu kita akan buat method untuk ambil data penjumlahan API.
 ```go
 func (c *MathClient) APISum(i, j string) (int, int, error) {
@@ -183,6 +185,7 @@ func (c *MathClient) APISum(i, j string) (int, int, error) {
 	return a.Result, statusCode, nil
 }
 ```
+## Membuat Unit Test yang dijadikan Integration Test
 Selanjutnya, kita akan membuat API Integration testing ini di method yang ini. Bisa kita buat program seperti ini atau `generate` saja pada method `APISum`.
 ```go
 func TestMathClient_APISum(t *testing.T) {
@@ -226,6 +229,7 @@ func TestMathClient_APISum(t *testing.T) {
 }
 
 ```
+## Tambahkan Test Case
 Lalu agar kita bisa melakukan pengujian `case by case` kita perlu isi berapa tesitng case pada kurung kurawal diatas dengan isi seperti ini.
 ```go
 {
@@ -299,7 +303,7 @@ Lalu agar kita bisa melakukan pengujian `case by case` kita perlu isi berapa tes
   wantCode: http.StatusBadRequest,
 },
 ```
-
+## Jalankan Integration Test
 Semua sudah selesai untuk pengujian dan pembuatan testing jangan lupa karena ini adalah code `integration test` maka kita perlu ada penambahan agar saat melakukan `go test -v` bisa kita tambahkan code diatas seperti ini.
 ```go
 //go:build integration
