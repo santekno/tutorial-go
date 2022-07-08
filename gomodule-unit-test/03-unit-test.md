@@ -525,19 +525,13 @@ ok      github.com/santekno/tabung      0.750s
 ```
 Maka hasilnya akan `generate` html yang berupa visualiasi dari unit test yg sudah tercover ataupun yang belum
 
-## Latihan
-Buatlah unit test dari fungsi polindrome ini
-```go
-func IsPalindrome(text string) bool {
-   if len(text) <= 1 {
-      return true
-   }
-   if len(text) == 2 && text[0] == text[1] {
-      return true
-   }
-   if text[0] != text[len(text)-1] {
-      return false
-   }
-   return IsPalindrome(text[1 : len(text)-1])
-}
+### Perintah untuk melakukan generate ulang menggunakan `moq`
+```bash
+$ cd <folder-yang-akan-di-generate>
+$ go generate ./...
 ```
+Pastikan juga pada fungsi interface ditambahkan paling atas `struct` seperti ini
+```go
+// go:generate moq -out main_mock_test.go . UserRepositoryInterface
+```
+dengan aturan seperti ini `go:generate moq -out <nama-file-mock-test> . <struct-interface-yang-akan-dibuat-mock>`

@@ -107,7 +107,6 @@ func TestTabung_KelilingAlas(t *testing.T) {
 }
 
 func BenchmarkHitungLuas(b *testing.B) {
-
 	for i := 0; i < b.N; i++ {
 		tabung.Luas()
 	}
