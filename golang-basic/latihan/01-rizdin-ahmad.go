@@ -1,3 +1,9 @@
+/*
+Edspert Bootcamp - Golang Backend
+Tugas 1 : Golang Basic
+Peserta : Rizdin Ahmad Farizi
+*/
+
 package main
 
 import "fmt"
@@ -11,15 +17,13 @@ func isPalindrome(quiz string) bool {
 	return true
 }
 func main() {
-	fmt.Println("Silahkan Input Kata Polindrome")
-
 	inputData := ("")
 
 	fmt.Scan(&inputData)
 	result := isPalindrome(inputData)
 	if result == true {
-		fmt.Println("Anda Benar")
+		fmt.Println("True")
 	} else {
-		fmt.Println("Salah")
+		fmt.Println("False")
 	}
 }
