@@ -1,4 +1,5 @@
-// go:integration
+//go:build integration
+
 package integrationtest
 
 import (
