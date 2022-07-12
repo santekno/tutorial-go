@@ -27,7 +27,7 @@ func main() {
 	runtime.GOMAXPROCS(2)
 
 	var numbers = []int{3, 4, 3, 5, 6, 3, 2, 2, 6, 3, 4, 6, 3}
-	fmt.Println("numbers :", numbers)
+	fmt.Printf("numbers :%v \njumlah: %d\n", numbers, len(numbers))
 
 	var ch1 = make(chan float64)
 	go getAverage(numbers, ch1)

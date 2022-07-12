@@ -137,7 +137,7 @@ func fanOut(chA <-chan int, chB, chC chan<- int) {
 	}
 }
 ```
-Jika dilihat dari fungsi `fanOut` bisa kita lihat bahwa data yang dikirim melewati channel `chA` lalu data tersebut akan diterima oleh beberapa channel yang mana pada program ini yaitu channel `chB` can `chC`.
+Jika dilihat dari fungsi `fanOut` bisa kita lihat bahwa data yang dikirim melewati channel `chA` lalu data tersebut akan diterima oleh beberapa channel yang mana pada program ini yaitu channel `chB` dan `chC`.
 
 Lalu selain buat fungsi `fanOut` kita juga ada beberapa implementasi yang perlu kita ganti di fungsi `main`. Berikut ini perubahannya dibawah ini.
 ```go

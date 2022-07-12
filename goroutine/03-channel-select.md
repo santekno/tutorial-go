@@ -41,7 +41,7 @@ func main() {
 	runtime.GOMAXPROCS(2)
 
 	var numbers = []int{3, 4, 3, 5, 6, 3, 2, 2, 6, 3, 4, 6, 3}
-	fmt.Println("numbers :", numbers)
+	fmt.Println("numbers : ", numbers)
 
 	var ch1 = make(chan float64)
 	go getAverage(numbers, ch1)
@@ -175,7 +175,7 @@ import (
 func sendData(ch chan<- int) {
 	for i := 0; true; i++ {
 		ch <- i
-		time.Sleep(time.Duration(rand.Int()%10+1) * time.Second)
+		time.Sleep(time.Duration(rand.Int()%10+1) * time.Second) // fungsi tertentu yg proses-nya lama, kadang2
 	}
 }
 ```

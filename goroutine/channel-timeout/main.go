@@ -10,7 +10,9 @@ import (
 func sendData(ch chan<- int) {
 	for i := 0; true; i++ {
 		ch <- i
-		time.Sleep(time.Duration(rand.Int()%10+1) * time.Second)
+		randoSec := rand.Int()%10 + 1
+		fmt.Println("lama proses : ", randoSec)
+		time.Sleep(time.Duration(randoSec) * time.Second)
 	}
 }
 
