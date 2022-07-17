@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 
@@ -40,20 +41,26 @@ func main() {
 	}
 	fmt.Println("Connected!")
 
-	albums, err := albumsByArtist("Peterpan")
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Albums found: %v\n", albums)
+	// albums, err := albumsByArtist("Peterpan")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Printf("Albums found: %v\n", albums)
+
+	// for _, album := range albums {
+	// 	log.Printf("Title  : %s\n", album.Title)
+	// 	log.Printf("Artist : %s\n", album.Artist)
+	// 	log.Printf("Price  : %f\n", album.Price)
+	// }
 
 	// Hard-code ID 2 here to test the query.
-	alb, err := albumByID(2)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Album found: %v\n", alb)
+	// alb, err := albumByID(2)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// fmt.Printf("Album found: %v\n", alb)
 
-	// albID, err := addAlbum(Album{
+	// albID, sumAffected, err := addAlbum(Album{
 	// 	Title:  "Taman Langit",
 	// 	Artist: "Peterpan",
 	// 	Price:  50000.0,
@@ -62,6 +69,7 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 	// fmt.Printf("ID of added album: %v\n", albID)
+	// fmt.Printf("Sum affected %d\n", sumAffected)
 
 	// // insert data bulk using transaction model
 	// albumIDs, err := BulkInsertUsingTransaction()
@@ -107,16 +115,22 @@ func albumByID(id int64) (Album, error) {
 	return alb, nil
 }
 
-func addAlbum(alb Album) (int64, error) {
+func addAlbum(alb Album) (int64, int64, error) {
 	result, err := db.Exec("INSERT INTO album (title, artist, price) VALUES (?, ?, ?)", alb.Title, alb.Artist, alb.Price)
 	if err != nil {
-		return 0, fmt.Errorf("addAlbum: %v", err)
+		return 0, 0, fmt.Errorf("addAlbum: %v", err)
 	}
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("addAlbum: %v", err)
+		return 0, 0, fmt.Errorf("addAlbum: %v", err)
 	}
-	return id, nil
+
+	sum, err := result.RowsAffected()
+	if err != nil {
+		return 0, 0, fmt.Errorf("error when getting rows affected")
+	}
+
+	return id, sum, nil
 }
 
 func BulkInsertUsingTransaction() ([]int64, error) {
@@ -157,10 +171,10 @@ func BulkInsertUsingTransaction() ([]int64, error) {
 		lastInsertId, err := result.LastInsertId()
 		if err != nil {
 			log.Printf("error : %v", err)
-			continue
 		}
 
 		insertID = append(insertID, lastInsertId)
+		return insertID, errors.New("error")
 	}
 
 	err = tx.Commit()

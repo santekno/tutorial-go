@@ -8,38 +8,45 @@ import (
 	"time"
 )
 
-type PostgresService struct {
+type MSSQLService struct {
 	db *sql.DB
 }
 
-func NewPostgresService(db *sql.DB) *PostgresService {
-	return &PostgresService{db: db}
+func NewMSSQLService(db *sql.DB) *MSSQLService {
+	return &MSSQLService{db: db}
 }
 
-func (p *PostgresService) Create(album *Album) error {
+func (p *MSSQLService) Create(album *Album) error {
 	query := `
-        INSERT INTO public.album (id, title, artist, price) 
-        VALUES ($1, $2, $3, $4)
-        RETURNING id`
+        INSERT INTO dbo.album (title, artist, price) 
+        VALUES (@title, @artist, @price)`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	return p.db.QueryRowContext(ctx, query, album.Title, album.Artist, album.Price).Scan(&album.ID)
+	_, err := p.db.ExecContext(ctx, query,
+		sql.Named("title", album.Title),
+		sql.Named("artist", album.Artist),
+		sql.Named("price", album.Price))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (p *PostgresService) Get(id int64) (*Album, error) {
+func (p *MSSQLService) Get(id int64) (*Album, error) {
 	query := `
         SELECT id, title, artist, price
-        FROM public.album
-        WHERE id = $1`
+        FROM dbo.album
+        WHERE id = @id`
 
 	var album Album
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	err := p.db.QueryRowContext(ctx, query, id).Scan(
+	err := p.db.QueryRowContext(ctx, query, sql.Named("id", id)).Scan(
 		&album.ID,
 		&album.Title,
 		&album.Artist,
@@ -53,10 +60,10 @@ func (p *PostgresService) Get(id int64) (*Album, error) {
 	return &album, nil
 }
 
-func (p *PostgresService) GetAllAlbum() ([]Album, error) {
+func (p *MSSQLService) GetAllAlbum() ([]Album, error) {
 	query := `
 		SELECT id, title, artist, price
-		FROM album`
+		FROM dbo.album`
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -87,7 +94,7 @@ func (p *PostgresService) GetAllAlbum() ([]Album, error) {
 	return albums, nil
 }
 
-func (p *PostgresService) BatchCreate(albums []Album) error {
+func (p *MSSQLService) BatchCreate(albums []Album) error {
 	tx, err := p.db.Begin()
 	if err != nil {
 		return err
@@ -97,10 +104,13 @@ func (p *PostgresService) BatchCreate(albums []Album) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	query := `INSERT INTO album (title, artist, price) VALUES ($1, $2, $3)`
+	query := `INSERT INTO dbo.album (title, artist, price) VALUES (@title, @artist, @price)`
 
 	for _, album := range albums {
-		_, err := tx.ExecContext(ctx, query, album.Title, album.Artist, album.Price)
+		_, err := tx.ExecContext(ctx, query,
+			sql.Named("title", album.Title),
+			sql.Named("artist", album.Artist),
+			sql.Named("price", album.Price))
 		if err != nil {
 			log.Printf("error execute insert err: %v", err)
 			continue
@@ -115,12 +125,16 @@ func (p *PostgresService) BatchCreate(albums []Album) error {
 	return nil
 }
 
-func (p *PostgresService) Update(album Album) error {
+func (p *MSSQLService) Update(album Album) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	query := `UPDATE album set title=$1, artist=$2, price=$3 WHERE id=$4`
-	result, err := p.db.ExecContext(ctx, query, album.Title, album.Artist, album.Price, album.ID)
+	query := `UPDATE dbo.album set title=@title, artist=@artist, price=@price WHERE id=@id`
+	result, err := p.db.ExecContext(ctx, query,
+		sql.Named("title", album.Title),
+		sql.Named("artist", album.Artist),
+		sql.Named("price", album.Price),
+		sql.Named("id", album.ID))
 	if err != nil {
 		return err
 	}
@@ -134,12 +148,12 @@ func (p *PostgresService) Update(album Album) error {
 	return nil
 }
 
-func (p *PostgresService) Delete(id int64) error {
+func (p *MSSQLService) Delete(id int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	query := `DELETE from album WHERE id=$1`
-	result, err := p.db.ExecContext(ctx, query, id)
+	query := `DELETE from dbo.album WHERE id=@id`
+	result, err := p.db.ExecContext(ctx, query, sql.Named("id", id))
 	if err != nil {
 		return err
 	}

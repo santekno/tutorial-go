@@ -42,7 +42,7 @@ func main() {
 	}
 	fmt.Printf("all album : %v\n", albums)
 
-	albumNo1, err := application.AlbumService.Get(1)
+	albumNo1, err := application.AlbumService.Get(2)
 	if err != nil {
 		log.Fatal(err)
 	}
