@@ -1,0 +1,3 @@
+[submodule "deployment-with-docker/docker-go"]
+	path = deployment-with-docker/docker-go
+	url = git@github.com:santekno/docker-go.git
