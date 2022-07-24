@@ -45,6 +45,7 @@ func main() {
 
 	router.GET("/albums", application.GetAllAlbums)
 	router.GET("/album/:id", application.Get)
+	router.GET("/album/artist", application.GetByArtist)
 	router.Run()
 }
 

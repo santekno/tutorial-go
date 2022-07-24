@@ -53,6 +53,41 @@ func (p *PostgresService) Get(id int64) (*Album, error) {
 	return &album, nil
 }
 
+func (p *PostgresService) GetByArtist(artist string) ([]Album, error) {
+	query := `
+        SELECT id, title, artist, price
+        FROM public.album
+        WHERE artist = $1`
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	var albums []Album
+
+	rows, err := p.db.QueryContext(ctx, query, artist)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var album Album
+		err := rows.Scan(
+			&album.ID,
+			&album.Title,
+			&album.Artist,
+			&album.Price,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		albums = append(albums, album)
+	}
+
+	return albums, nil
+}
+
 func (p *PostgresService) GetAllAlbum() ([]Album, error) {
 	query := `
 		SELECT id, title, artist, price

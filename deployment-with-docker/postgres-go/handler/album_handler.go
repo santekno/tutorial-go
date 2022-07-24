@@ -49,3 +49,23 @@ func (ah *AlbumHandler) Get(c *gin.Context) {
 
 	c.JSON(http.StatusOK, album)
 }
+
+func (ah *AlbumHandler) GetByArtist(c *gin.Context) {
+	paramArtist := c.Request.FormValue("artist")
+	if paramArtist == "" {
+		c.JSON(400, map[string]interface{}{
+			"message": "invalid artist",
+		})
+		return
+	}
+
+	album, err := ah.AlbumService.GetByArtist(paramArtist)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "error when find get album by artist : " + paramArtist,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, album)
+}

@@ -151,7 +151,7 @@ networks:
 * `build, context, dockerfile` : Tag ini kita pakai untuk mengarahkan image mana yang akan dijadikan sumber untuk pembuatan container.
 * `container_name` : Nama dari container yang akan kita buat
 * `environment` : tag ini digunakan untuk mengirim environment config untuk bisa dibaca oleh container API
-* `posts` digunakan untuk menginisialisasi port yang akan kita expose ke luar dan yang di expose dari dalam.
+* `ports` digunakan untuk menginisialisasi port yang akan kita expose ke luar dan yang di expose dari dalam.
 * `depends_on` digunakan jika salah satu container memiliki ketergantungan ke container yang lain, sehingga jika container yang lain tidak ada maka tidak bisa dilakukan pembuatan container tersebut.
 * `networks` digunakan untuk pemakaian di dalam service tersebut apakah menggunakan network yang sudah diinisialisasi atau disamakan di berbagai container.
 

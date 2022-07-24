@@ -14,4 +14,5 @@ type AlbumService interface {
 	BatchCreate(albums []Album) error
 	Update(Album Album) error
 	Delete(id int64) error
+	GetByArtist(artist string) ([]Album, error)
 }
