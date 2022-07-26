@@ -7,6 +7,7 @@
 * Pahami Git Action
 
 ## Flow CI / CD
+![Flow CI/CD Heroku](./flow-ci-cd.drawio.png)
 
 ## Buat Git Action Sebagai Continues Integration and Continues Delivery
 Pada tahapan ini kita akan membuat project kita akan memiliki integration yang mana nantinya akan ada pengecekan mulai dari unit test, coverage, sampai dengan code analisis akan kita terapkan. Berikut ini tahapannya:
@@ -319,6 +320,6 @@ Selanjut-nya kita `commit` ke dalam PR-nya agar bisa kita lanjutkan deploy ke da
 
 Jika semua sudah kita lakukan saatnya kita `merge` PR yang sudah kita buat lalu lihat beberapa server akan ter-trigger untuk melakukan deploy secara otomatis karena ada changes pada branch yang dituju.
 
-![build success](build-success-heroku.png)
+![build success](./build-success-heroku.png)
 
 Sukses, maka tinggal kita akses saja API Project kita dengan menggunakan postman atau langsung ke browser pada alamat ini [https://using-docker-go-staging-apps.herokuapp.com/](https://using-docker-go-staging-apps.herokuapp.com/)
