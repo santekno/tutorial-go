@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.multistage
+    container_name: course-api
+    ports:
+      - "1234:1234"
+    depends_on:
+      - db
+    networks:
+      - mynet
+  db:
+    image: mysql
+    container_name: course-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    ports:
+      - "60082:3306"
+    networks:
+      - mynet
+
+networks:
+  course_network:
+    external: true
+    name: course_network
+  mynet:
+    driver: bridge
