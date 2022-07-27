@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: album-api
+    environment:
+      - POSTGRES_URL=postgres://root:secret@db/recordings?sslmode=disable
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - mynet
+  db:
+    image: postgres
+    container_name: albums-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=recordings
+    networks:
+      - mynet
+
+networks:
+  course_network:
+    external: true
+    name: course_network
+  mynet:
+    driver: bridge

@@ -58,7 +58,7 @@ func (p *PostgresService) GetAllAlbum() ([]Album, error) {
 		SELECT id, title, artist, price
 		FROM album`
 
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
 	var albums []Album
@@ -129,6 +129,7 @@ func (p *PostgresService) Update(album Album) error {
 	if err != nil {
 		return err
 	}
+
 	fmt.Printf("Affected update : %d", rows)
 	return nil
 }

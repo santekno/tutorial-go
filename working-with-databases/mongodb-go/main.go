@@ -49,12 +49,12 @@ func insert() {
 
 	ctx := context.Background()
 
-	_, err = db.Collection("album").InsertOne(ctx, Album{ID: 1, Title: "Hari Yang Cerah", Artist: "Peterpan", Price: 50000})
+	_, err = db.Collection("album").InsertOne(ctx, Album{ID: 5, Title: "Hari Yang Cerah", Artist: "Peterpan", Price: 50000})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	_, err = db.Collection("album").InsertOne(ctx, Album{ID: 2, Title: "Sebuah Nama Sebuah Cerita", Artist: "Peterpan", Price: 50000})
+	_, err = db.Collection("album").InsertOne(ctx, Album{ID: 6, Title: "Sebuah Nama Sebuah Cerita", Artist: "Peterpan", Price: 50000})
 	if err != nil {
 		log.Fatal(err.Error())
 	}
