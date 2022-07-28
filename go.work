@@ -1,0 +1,6 @@
+go 1.18
+
+use (
+    ./golang-basic
+    ./gomodule-unit-test
+)

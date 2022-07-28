@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 type Student struct {
 	FullName string `json:"fullname"`
@@ -8,6 +11,7 @@ type Student struct {
 	Class    int    `json:"class"`
 }
 
+//go:generate moq -out main_mock_test.go . StudentRepositoryInterface
 type StudentRepositoryInterface interface {
 	GetAllStudents() ([]Student, error)
 }
@@ -16,17 +20,25 @@ type StudentService struct {
 	StudentRepositoryInterface
 }
 
-func (s StudentService) GetStudent() ([]Student, error) {
+func (s StudentService) GetStudent(name string) ([]Student, error) {
 	Students, err := s.StudentRepositoryInterface.GetAllStudents()
 	if err != nil {
 		return nil, err
 	}
 
+	var result = make([]Student, 0)
+
 	for i := range Students {
-		Students[i].FullName = "Ihsan Arif"
+		if Students[i].FullName == name {
+			result = append(result, Students[i])
+		}
 	}
 
-	return Students, nil
+	if len(result) < 1 {
+		return nil, errors.New("Data tidak ditemukan!")
+	}
+
+	return result, nil
 }
 
 type StudentRepository struct{}
@@ -43,6 +55,10 @@ func (r StudentRepository) GetAllStudents() ([]Student, error) {
 func main() {
 	repository := StudentRepository{}
 	service := StudentService{repository}
-	Students, _ := service.GetStudent()
-	fmt.Println(Students)
+	student, err := service.GetStudent("Ihsan Arif")
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(student)
+	}
 }
