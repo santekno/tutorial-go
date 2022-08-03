@@ -62,7 +62,7 @@ Boolean mewakili bit yang mana memiliki nilai 1 bit integer yang mana merepresen
 | x | Operation |
 | :-: | :--------- |
 | && | and |
-| || | or |
+| `||` | or |
 | ! | not |
 
 Berikut ini contoh [program ini]() agar kamu bisa lebih memahami.
