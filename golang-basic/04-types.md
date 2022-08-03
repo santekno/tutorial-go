@@ -62,7 +62,7 @@ Boolean mewakili bit yang mana memiliki nilai 1 bit integer yang mana merepresen
 | x | Operation |
 | :-: | :--------- |
 | && | and |
-| || | or |
+| `||` | or |
 | ! | not |
 
 Berikut ini contoh [program ini]() agar kamu bisa lebih memahami.
@@ -100,10 +100,10 @@ Kita bisa lihat juga tabel logika `and` dibawah ini
 Tabel logika `or`
 | Ekspresi | Value |
 | :-: | :--------- |
-| true || true | true |
-| true || false | true |
-| false || true | true |
-| false || false | false |
+| true `||` true | true |
+| true `||` false | true |
+| false `||` true | true |
+| false `||` false | false |
 
 Tabel Logika `not`
 | Ekspresi | Value |
