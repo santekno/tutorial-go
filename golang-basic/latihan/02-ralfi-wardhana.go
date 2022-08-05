@@ -35,7 +35,10 @@ func konsonanOrVocal(huruf string) string {
 }
 
 func main() {
+	var input string
 
-	result := konsonanOrVocal("O")
+	fmt.Print("Enter a string: ")
+	fmt.Scanf("%s", &input)
+	result := konsonanOrVocal(input)
 	fmt.Println(result)
 }
