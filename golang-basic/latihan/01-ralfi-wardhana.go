@@ -8,13 +8,11 @@ import (
 func polindrome(kalimat string) bool {
 
 	convertLowerCase := strings.ToLower(kalimat)
-	convertToArray := strings.Split(convertLowerCase, "")
-	split := convertToArray[:]
 
-	for i, _ := range split {
-		lastIndex := (len(split) - 1) - i
+	for i, _ := range convertLowerCase {
+		lastIndex := (len(convertLowerCase) - 1) - i
 
-		if split[i] != split[lastIndex] {
+		if convertLowerCase[i] != convertLowerCase[lastIndex] {
 			return false
 		}
 	}
@@ -23,6 +21,7 @@ func polindrome(kalimat string) bool {
 
 func main() {
 
-	result := polindrome("kakak")
+	result := polindrome("kaAAko")
 	fmt.Println(result)
 }
+
