@@ -20,7 +20,10 @@ func polindrome(kalimat string) bool {
 }
 
 func main() {
+	var input string
 
-	result := polindrome("kako")
+	fmt.Print("Enter a string: ")
+	fmt.Scanf("%s", &input)
+	result := polindrome(input)
 	fmt.Println(result)
 }
