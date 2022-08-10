@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestStudentRepository_GetAllStudents(t *testing.T) {
+func TestStudentRepository_GetStudents(t *testing.T) {
 	type fields struct {
 		StudentRepositoryInterface StudentRepositoryInterface
 	}
@@ -75,6 +75,37 @@ func TestStudentRepository_GetAllStudents(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("StudentService.GetStudent() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestStudentRepository_GetAllStudents(t *testing.T) {
+	tests := []struct {
+		name    string
+		r       StudentRepository
+		want    []Student
+		wantErr bool
+	}{
+		{
+			name: "get all data student",
+			want: []Student{
+				{"Ihsan Arif", "B", 1},
+				{"Tono", "A", 2},
+				{"Andi", "C", 3},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			r := StudentRepository{}
+			got, err := r.GetAllStudents()
+			if (err != nil) != tt.wantErr {
+				t.Errorf("StudentRepository.GetAllStudents() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("StudentRepository.GetAllStudents() = %v, want %v", got, tt.want)
 			}
 		})
 	}
