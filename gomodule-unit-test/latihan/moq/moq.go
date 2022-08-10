@@ -22,9 +22,9 @@ func (s StudentService) GetStudent() ([]Student, error) {
 		return nil, err
 	}
 
-	for i := range Students {
-		Students[i].FullName = "Ihsan Arif"
-	}
+	// for i := range Students {
+	// 	Students[i].FullName = "Ihsan Arif"
+	// }
 
 	return Students, nil
 }
