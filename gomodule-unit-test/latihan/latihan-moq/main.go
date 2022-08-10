@@ -25,7 +25,6 @@ func (s StudentService) GetStudent() ([]Student, error) {
 	// for i := range Students {
 	// 	Students[i].FullName = "Ihsan Arif"
 	// }
-
 	return Students, nil
 }
 
