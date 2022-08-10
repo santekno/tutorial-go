@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestStudentRepository_GetStudents(t *testing.T) {
+func TestStudentRepository_GetStudent(t *testing.T) {
 	type fields struct {
 		StudentRepositoryInterface StudentRepositoryInterface
 	}
