@@ -1,4 +1,4 @@
-module github.com/santekno/tabung
+module github.com/santekno/polindrome
 
 go 1.17
 

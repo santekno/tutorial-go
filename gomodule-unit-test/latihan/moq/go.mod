@@ -1,4 +1,4 @@
-module github.com/santekno/tabung
+module github.com/santekno/moq
 
 go 1.17
 
