@@ -100,10 +100,10 @@ Kita bisa lihat juga tabel logika `and` dibawah ini
 Tabel logika `or`
 | Ekspresi | Value |
 | :-: | :--------- |
-| true `||` true | true |
-| true `||` false | true |
-| false `||` true | true |
-| false `||` false | false |
+| true \|\| true | true |
+| true \|\| false | true |
+| false \|\| true | true |
+| false \|\| false | false |
 
 Tabel Logika `not`
 | Ekspresi | Value |
