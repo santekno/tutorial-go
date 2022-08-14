@@ -1,3 +1,3 @@
-module github.com/santekno/latihanmoq
+module moqtest
 
-go 1.17
+go 1.19
