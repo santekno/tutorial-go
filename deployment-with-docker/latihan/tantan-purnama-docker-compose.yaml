@@ -1,0 +1,67 @@
+version: '3.8'
+services:
+  traefik:
+    image: "traefik:v2.8"
+    container_name: "traefik"
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - traefik
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env.example
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.app.rule=Host(`app.localhost`)
+      - traefik.http.services.app.loadbalancer.server.port=1234
+    networks:
+      - traefik
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: mysql:5.7
+    cap_add:
+      - SYS_NICE
+    restart: always
+    env_file:
+      - .env.example
+    ports:
+      - '3306:3306'
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping"]
+      retries: 3
+      timeout: 5s
+    volumes:
+      - db:/var/lib/mysql
+      - ./course.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - traefik
+
+  adminer:
+    image: adminer
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - traefik.http.routers.adminer.rule=Host(`db.localhost`)
+      - traefik.http.services.adminer.loadbalancer.server.port=8080
+    networks:
+      - traefik
+
+volumes:
+  db:
+    driver: local
+
+networks:
+  traefik:
