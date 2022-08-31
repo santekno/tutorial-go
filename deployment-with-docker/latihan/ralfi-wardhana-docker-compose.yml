@@ -1,0 +1,36 @@
+version: "3"
+services:
+  db:
+    image: mysql:8.0.30
+    container_name: mysql-db
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+    networks:
+      - course
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: mysqladmin ping -h localhost -u ${DB_USERNAME} -p${DB_PASSWORD}
+      start_period: 10s
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    env_file:
+      - .env
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: course:${APP_VERSION:-latest}
+    container_name: course
+    env_file:
+      - .env
+    ports:
+      - 1234:1234
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - course
+networks:
+  course:
