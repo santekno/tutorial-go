@@ -22,10 +22,10 @@ func main() {
 	// Capture connection properties.
 	cfg := mysql.Config{
 		User:                 "root",
-		Passwd:               "root",
+		Passwd:               "",
 		Net:                  "tcp",
 		Addr:                 "127.0.0.1:3306",
-		DBName:               "recordings",
+		DBName:               "eduwork",
 		AllowNativePasswords: true,
 	}
 	// Get a database handle.

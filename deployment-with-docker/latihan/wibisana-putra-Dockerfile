@@ -1,0 +1,23 @@
+FROM golang:alpine
+
+RUN apk update && apk add --no-cache git
+
+WORKDIR /app
+
+COPY go.mod .
+
+COPY go.sum .
+
+RUN go mod tidy
+
+COPY . .
+
+RUN go build -o binary cmd/api/main.go
+
+WORKDIR /app
+
+COPY --from=build /app ./
+
+EXPOSE 5000
+
+ENTRYPOINT ["/app/binary"]
