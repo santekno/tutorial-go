@@ -7,7 +7,7 @@ func main() {
 	fmt.Scan(&str)
 
 	result := isPalindrome(str)
-	if result == true {
+	if result {
 		fmt.Println(true)
 	} else {
 		fmt.Println(false)
