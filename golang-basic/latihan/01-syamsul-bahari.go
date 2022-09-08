@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"4d63.com/strrev"
 )
@@ -13,10 +14,14 @@ func main() {
 
 	hasil := strrev.Reverse(polidrome)
 
-	if polidrome == hasil {
-		fmt.Println("true")
+	if len(polidrome) < 2 {
+		fmt.Println("String harus lebih dari 2 huruf")
 	} else {
-		fmt.Println("false")
+		if strings.ToLower(polidrome) == strings.ToLower(hasil) {
+			fmt.Println("true")
+		} else {
+			fmt.Println("false")
+		}
 	}
 
 }
