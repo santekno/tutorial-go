@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
+//go:generate moq -out studentrepositoryinterface_moq_test.go . StudentRepositoryInterface
 type Student struct {
 	FullName string `json:"fullname"`
 	Grade    string `json:"grade"`
