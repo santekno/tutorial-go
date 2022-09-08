@@ -20,7 +20,7 @@ func isVowel(chr byte) {
 		chr == 'A' || chr == 'E' || chr == 'I' || chr == 'O' || chr == 'U' {
 		fmt.Printf("%c termasuk karakter Vokal \n", chr)
 	} else {
-		fmt.Printf("%c termsuk karakterk Konsonan \n", chr)
+		fmt.Printf("%c termsuk karakter Konsonan \n", chr)
 	}
 
 }
