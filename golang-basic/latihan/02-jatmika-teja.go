@@ -17,22 +17,20 @@ func isVowel(input string) (bool, error) {
 		}
 	}
 
-	ye := make(map[string]bool)
-	ye["a"] = true
-	ye["e"] = true
-	ye["i"] = true
-	ye["o"] = true
-	ye["u"] = true
-
-	switch ye[strings.ToLower(input)] {
-	case true:
-		return true, nil
-	default:
-		return false, nil
+	vowels := map[string]bool{
+		"a": true,
+		"i": true,
+		"e": true,
+		"u": true,
+		"o": true,
 	}
+
+	key := strings.ToLower(input)
+	_, ok := vowels[key]
+	return !ok, nil
 }
 
-func main() {
+func main_02() {
 	// Konsonan
 	fmt.Println("Enter letter")
 	var input string

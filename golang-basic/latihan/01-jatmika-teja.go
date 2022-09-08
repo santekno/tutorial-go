@@ -21,7 +21,7 @@ func isPalindrome(input string) (bool, error) {
 
 	// flip right
 	strRune := []rune(fmt.Sprintf("%s", rightSlice))
-	for i, _ := range strRune {
+	for i := range strRune {
 		rightSliceFlip = fmt.Sprintf("%c%s", strRune[i], rightSliceFlip)
 	}
 
@@ -33,7 +33,7 @@ func isPalindrome(input string) (bool, error) {
 	return leftSlice == rightSliceFlip, nil
 }
 
-func main() {
+func main_01() {
 	fmt.Println("Enter word")
 	var input string
 	fmt.Scanln(&input)
