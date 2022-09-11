@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 )
 
@@ -25,15 +24,10 @@ func isPalindrome(input string) (bool, error) {
 		rightSliceFlip = fmt.Sprintf("%c%s", strRune[i], rightSliceFlip)
 	}
 
-	// fmt.Printf("%d, %s, %s, %s\n", halfLength, leftSlice, rightSlice, rightSliceFlip)
-
-	if len(leftSlice) != len(rightSlice) {
-		return false, errors.New("should be sliced evenly")
-	}
 	return leftSlice == rightSliceFlip, nil
 }
 
-func main_01() {
+func main01() {
 	fmt.Println("Enter word")
 	var input string
 	fmt.Scanln(&input)

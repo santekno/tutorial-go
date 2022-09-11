@@ -8,12 +8,12 @@ func main() {
 	fmt.Println("1. Check palindrome")
 	fmt.Println("2. Check consonant letter")
 	fmt.Scanln(&choice)
-	choice_map := map[int]func(){
-		1: main_01,
-		2: main_02,
+	choiceMap := map[int]func(){
+		1: main01,
+		2: main02,
 	}
 
-	fun, ok := choice_map[choice]
+	fun, ok := choiceMap[choice]
 	if ok {
 		fun()
 	}

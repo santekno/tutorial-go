@@ -7,7 +7,11 @@ import (
 	"unicode"
 )
 
-func isVowel(input string) (bool, error) {
+func isConsonant(input string) (bool, error) {
+	if len(input) < 1 {
+		return false, errors.New("CANT BE EMPTY STRING")
+	}
+
 	if len(input) > 1 {
 		return false, errors.New("LONG LETTER. len > 1")
 	}
@@ -30,13 +34,13 @@ func isVowel(input string) (bool, error) {
 	return !ok, nil
 }
 
-func main_02() {
+func main02() {
 	// Konsonan
 	fmt.Println("Enter letter")
 	var input string
 	fmt.Scanln(&input)
 
-	result, err := isVowel(input)
+	result, err := isConsonant(input)
 	if err != nil {
 		fmt.Printf("%v\n", err)
 	} else {
