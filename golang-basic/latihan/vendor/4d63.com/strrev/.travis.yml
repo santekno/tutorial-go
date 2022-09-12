@@ -1,0 +1,14 @@
+language: go
+
+go_import_path: 4d63.com/strrev
+
+before_install:
+  - go get github.com/golang/lint/golint
+
+script:
+  - go test -coverprofile=coverage.txt -bench=. -benchmem
+  - go vet
+  - golint
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
