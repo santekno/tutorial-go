@@ -21,8 +21,5 @@ func isPalindrom(val string) bool {
 		reverseVal += string(currentVal[i - 1])
 	}
 
-	if (reverseVal == currentVal) {
-		return true
-	}
-	return false
+	return reverseVal == currentVal
 }

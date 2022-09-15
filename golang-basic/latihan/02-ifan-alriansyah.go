@@ -13,6 +13,10 @@ func main() {
 }
 
 func isVowelOrConsonant(val string) string {
+	if (len(val) > 1) {
+		return "Please input one word"
+	}
+
 	switch strings.ToLower(val) {
 	case "a", "i", "u", "e", "o":
 		return "Vokal"
