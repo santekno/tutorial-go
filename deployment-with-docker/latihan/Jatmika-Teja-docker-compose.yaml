@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  ed_app_db:
+    image: "mysql:latest"
+    restart: unless-stopped
+    ports:
+      - "1312:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=course2
+    volumes:
+      # le-course.sql merupakan course2.sql dari repo tugas batch-4 dengan modifikasi untuk menghidari error constraint
+      - ./le-course.sql:/docker-entrypoint-initdb.d/course2.sql
+
+  ed_app:
+    image: "ed_app:latest"
+    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: Jatmika-Teja-Dockerfile
+      args:
+        - MYSQL_DBURL=root:root@tcp(ed_app_db:3306)/course2?charset=utf8mb4&parseTime=True&loc=Local
+        - APP_PORT=1231
+        - GIN_MODE=release
+    ports:
+      - "1313:1231"
+    depends_on:
+      - ed_app_db
