@@ -42,3 +42,25 @@ func main() {
 	Students, _ := service.GetStudent()
 	fmt.Println(Students)
 }
+
+func isPalindrom(kata string) bool {
+	for i := 0; i < len(kata)/2; i++ {
+		indexAwal := i
+		indexAkhir := len(kata) - i - 1
+
+		if kata[indexAwal] != kata[indexAkhir] {
+			return false
+		}
+
+	}
+	return true
+}
+
+func isVokal(character rune) {
+	switch character {
+	case 'a', 'e', 'i', 'o', 'u':
+		fmt.Printf(" %c adalah vokal\n", character)
+	default:
+		fmt.Printf(" %c adalah konsonan\n", character)
+	}
+}
