@@ -1,7 +1,7 @@
 # Tugas dan Latihan
 
 
-1. Buat `Dockerfile` untuk project teman-teman yang nanti akan menjadi project akhir. Source: https://github.com/ahsanulks/course-batch-3
+1. Buat `Dockerfile` untuk project teman-teman yang nanti akan menjadi project akhir. Source: https://github.com/ahsanulks/course-batch-4
 2. Setelah sukses membuat `Dockerfile`, buatkan juga `docker-compose.yaml` yang memanggil `Dockerfile` yang sudah teman-teman buat. Jika ada dependency ke dalam database maka perlu dicantumkan juga ke dalam file `docker-compose.yaml`. Misalkan menggunakan database `mysql` maka perlu ditambahkan juga di dalam file tersebut.
 
 ## Pengumpulan Tugas
