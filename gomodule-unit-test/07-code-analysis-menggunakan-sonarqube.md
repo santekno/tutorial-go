@@ -2,7 +2,9 @@
 
 ## Requirement
 * Install Docker
-* Install Install SonarQube Commnunity 
+* Install Install SonarQube Commnunity
+* Install Java
+* Install sonar-scanner-cli
 
 
 ## Pengenalan SonarQube
