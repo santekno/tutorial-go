@@ -48,8 +48,8 @@ func BenchmarkIsPolindrom(b *testing.B) {
 }
 
 func BenchmarkCheckIsVocal(b *testing.B) {
-	x := []string{"a", "b", "e", "f", "g"}
+	x := []string{"a", "b", "e", "f", "g", "o"}
 	for i := 0; i < b.N; i++ {
-		CheckIsVocal(x[rand.Intn(4)])
+		CheckIsVocal(x[rand.Intn(5)])
 	}
 }
