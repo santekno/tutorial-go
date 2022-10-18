@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -44,11 +45,42 @@ func TestStudentService_GetStudent(t *testing.T) {
 		want    []Student
 		wantErr bool
 	}{
+
 		{
-			name: "case ambil data user",
+			name: "case ambil data student",
 			fields: fields{
-				StudentRepositoryInterface: StudentRepositoryMock{},
+				StudentRepositoryInterface: &StudentRepositoryInterfaceMock{
+					GetAllStudentsFunc: func() ([]Student, error) {
+						return []Student{
+							{
+								FullName: "Tono",
+								Grade:    "A",
+								Class:    2,
+							},
+						}, nil
+					},
+				},
 			},
+			want: []Student{
+				{
+					FullName: "Tono",
+					Grade:    "A",
+					Class:    2,
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "case saat ambil data error",
+			fields: fields{
+				StudentRepositoryInterface: &StudentRepositoryInterfaceMock{
+					GetAllStudentsFunc: func() ([]Student, error) {
+						return nil, errors.New("error")
+					},
+				},
+			},
+			want:    nil,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
