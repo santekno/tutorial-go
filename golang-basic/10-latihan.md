@@ -1,7 +1,7 @@
 # Latihan
 
 ## Soal 1
-Buat program `polindrome` menggunakan golang
+Buat program `palindrome` menggunakan golang
 ```bash
 $ go main.go 
 $ madam
