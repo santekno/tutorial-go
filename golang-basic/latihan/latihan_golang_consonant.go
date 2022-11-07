@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -13,20 +14,25 @@ func main() {
 	fmt.Scan(&consonantInput)
 
 	fmt.Println("inputted word is " + consonantInput)
-	var isConsonant bool = isConsonant(palindromeInput)
+	var isConsonant bool = isConsonant(consonantInput)
 
 	fmt.Println(isConsonant)
 }
 
 func isConsonant(character string) bool {
-	var charToCheck = strings.ToLower(character)
-	var consonantCharacters []string = []string{"a", "i", "u", "e", "o"}
+	isAlpha := regexp.MustCompile(`^[A-Za-z]+$`).MatchString
+	if isAlpha(character) {
+		var charToCheck = strings.ToLower(character)
+		var consonantCharacters []string = []string{"a", "i", "u", "e", "o"}
 
-	for _, element := range consonantCharacters {
-		if charToCheck == element {
-			return true
+		for _, element := range consonantCharacters {
+			if charToCheck == element {
+				return false
+			}
 		}
-	}
 
-	return false
+		return true
+	} else {
+		return false
+	}
 }
