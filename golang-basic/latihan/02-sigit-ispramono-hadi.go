@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 
+//Soal 2 : Cek Huruf Vokal atau Konsonan
 func cekVokalKonsonan(kata string) string {
 	vokal := []string{"a", "i", "u", "e", "o"}
 	konsonan := []string{"b", "c", "d", "f", "h", "j", "k", "l", "m", "n", "p", "q", "r", "s", "t", "v", "w", "x", "y", "z"}
