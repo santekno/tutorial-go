@@ -1,17 +1,17 @@
 package main
 
-//func isPalindrome(input string) bool {
-//	length := len(input)
-//	limit := length / 2
-//
-//	for i := 0; i < limit; i++ {
-//		if input[i] != input[length-i-1] {
-//			return false
-//		}
-//	}
-//
-//	return true
-//}
+func isPalindrome(input string) bool {
+	length := len(input)
+	limit := length / 2
+
+	for i := 0; i < limit; i++ {
+		if input[i] != input[length-i-1] {
+			return false
+		}
+	}
+
+	return true
+}
 
 //func main() {
 //	var input string
