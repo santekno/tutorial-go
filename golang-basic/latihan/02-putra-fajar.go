@@ -26,12 +26,4 @@ func consonantOrVocal(input string) {
 	}
 
 	fmt.Println("Konsonan")
-	// b := []byte(a)
-	// for i := 0; i < len(b); i++ {
-	// 	if b[i] == byte('a') || b[i] == byte('i') || b[i] == byte('u') || b[i] == byte('e') || b[i] == byte('o') {
-	// 		fmt.Println("Vokal")
-	// 		return
-	// 	}
-	// }
-	// fmt.Println("Konsonan")
 }
