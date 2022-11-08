@@ -34,3 +34,11 @@ func Test_isVocal(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkIsVocal(b *testing.B) {
+	vocalString := "a"
+
+	for i := 0; i < b.N; i++ {
+		isVocal(vocalString)
+	}
+}
