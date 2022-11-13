@@ -1,37 +1,33 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
 	"strings"
 )
 
-func main() {
-	fmt.Println("Enter 1 character")
-	inputReader := bufio.NewReader(os.Stdin)
-	character, _ := inputReader.ReadString('\n')
-	character = strings.Trim(character, "\n")
+// func main() {
+// 	fmt.Println("Enter 1 character")
+// 	inputReader := bufio.NewReader(os.Stdin)
+// 	character, _ := inputReader.ReadString('\n')
+// 	character = strings.Trim(character, "\n")
+// 	fmt.Println(consonantVocal(character))
+// }
 
+func consonantVocal(character string) string {
 	if len(character) > 1 {
-		fmt.Println("Only one character allowed")
-		return
+		return "Only one character allowed"
 	}
 
 	for _, r := range character {
 		if (r < 'a' || r > 'z') && (r < 'A' || r > 'Z') {
-			fmt.Println("Character must be alphabet")
-			return
+			return "Character must be alphabet"
 		}
 	}
 
 	character = strings.ToLower(character)
 
 	if character == "a" || character == "i" || character == "u" || character == "e" || character == "o" {
-		fmt.Println("vocal")
-		return
+		return "vocal"
 	}
 
-	fmt.Println("consonant")
-
+	return "consonant"
 }

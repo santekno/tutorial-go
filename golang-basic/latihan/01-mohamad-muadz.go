@@ -1,19 +1,19 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"strings"
 )
 
-// check if entered word is polindrome
+// func main() {
+// 	fmt.Println("Enter word(s):")
+// 	inputReader := bufio.NewReader(os.Stdin)
+// 	word, _ := inputReader.ReadString('\n')
+// 	word = strings.Trim(strings.ToLower(word), "\n")
+// 	polindrome(word)
+// }
 
-func main() {
-	fmt.Println("Enter word(s):")
-	inputReader := bufio.NewReader(os.Stdin)
-	word, _ := inputReader.ReadString('\n')
-	word = strings.Trim(strings.ToLower(word), "\n")
+func polindrome(word string) bool {
 	var arrWord []string
 	var reverse string
 	for _, v := range word {
@@ -24,5 +24,7 @@ func main() {
 	}
 	reverse = strings.Trim(reverse, "\n")
 
-	fmt.Println(word == reverse)
+	isPolindrome := word == reverse
+	fmt.Println(isPolindrome)
+	return isPolindrome
 }
