@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Student struct {
 	FullName string `json:"fullname"`
@@ -8,6 +10,7 @@ type Student struct {
 	Class    int    `json:"class"`
 }
 
+//go:generate moq -out main_mock_test.go . StudentRepositoryInterface
 type StudentRepositoryInterface interface {
 	GetAllStudents() ([]Student, error)
 }
@@ -16,7 +19,7 @@ type StudentService struct {
 	StudentRepositoryInterface
 }
 
-func (s StudentService) GetStudent() ([]Student, error) {
+func (s StudentService) GetStudents() ([]Student, error) {
 	Students, err := s.StudentRepositoryInterface.GetAllStudents()
 	if err != nil {
 		return nil, err
@@ -38,7 +41,7 @@ func (r StudentRepository) GetAllStudents() ([]Student, error) {
 
 func main() {
 	repository := StudentRepository{}
-	service := StudentService{repository}
-	Students, _ := service.GetStudent()
-	fmt.Println(Students)
+	service := StudentService{&repository}
+	Students, err := service.GetStudents()
+	fmt.Println(Students, err)
 }
