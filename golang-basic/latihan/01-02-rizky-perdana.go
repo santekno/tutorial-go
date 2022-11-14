@@ -51,7 +51,8 @@ func menuPolindrome() {
 	fmt.Scan(&textInput)
 
 	if !validateInputText(textInput) {
-		checkPolindrome(textInput)
+		result := checkPolindrome(textInput)
+		fmt.Println(result)
 		fmt.Println()
 		fmt.Println()
 	}
@@ -68,7 +69,8 @@ func menuConsonant() {
 
 	if !validateInputText(textInput) {
 		if len(textInput) == 1 {
-			checkConsonant(textInput)
+			result := checkConsonant(textInput)
+			fmt.Println(result)
 			fmt.Println()
 			fmt.Println()
 		} else {
@@ -79,28 +81,32 @@ func menuConsonant() {
 	}
 }
 
-func checkPolindrome(textInput string) {
+func checkPolindrome(textInput string) string {
 	var textInputUpperCase string = strings.ToUpper(textInput)
 	var halfLengthText int = len(textInputUpperCase) / 2
 
 	for i := 0; i < halfLengthText; i++ {
 		if textInputUpperCase[i] != textInputUpperCase[len(textInputUpperCase)-i-1] {
-			fmt.Println("Text input is not polindrome")
-			return
+			//fmt.Println("Text input is not polindrome")
+			//return
+			return "Text input is not polindrome"
 		}
 	}
 
-	fmt.Println("Text input is polindrome")
+	//fmt.Println("Text input is polindrome")
+	return "Text input is polindrome"
 }
 
-func checkConsonant(textInput string) {
+func checkConsonant(textInput string) string {
 	var alphabetConsonant string = "AEIOU"
 
 	if strings.Contains(alphabetConsonant, strings.ToUpper(textInput)) {
-		fmt.Println("Text input is vocal")
-		return
+		//fmt.Println("Text input is vocal")
+		//return
+		return "Text input is vocal"
 	} else {
-		fmt.Println("Text input is consonant")
+		//fmt.Println("Text input is consonant")
+		return "Text input is consonant"
 	}
 }
 

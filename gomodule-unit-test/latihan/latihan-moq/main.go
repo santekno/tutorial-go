@@ -8,6 +8,7 @@ type Student struct {
 	Class    int    `json:"class"`
 }
 
+//go:generate moq -out main_mock_test.go . StudentRepositoryInterface
 type StudentRepositoryInterface interface {
 	GetAllStudents() ([]Student, error)
 }
@@ -16,7 +17,7 @@ type StudentService struct {
 	StudentRepositoryInterface
 }
 
-func (s StudentService) GetStudent() ([]Student, error) {
+func (s *StudentService) GetStudent() ([]Student, error) {
 	Students, err := s.StudentRepositoryInterface.GetAllStudents()
 	if err != nil {
 		return nil, err
@@ -27,7 +28,7 @@ func (s StudentService) GetStudent() ([]Student, error) {
 
 type StudentRepository struct{}
 
-func (r StudentRepository) GetAllStudents() ([]Student, error) {
+func (r *StudentRepository) GetAllStudents() ([]Student, error) {
 	Students := []Student{
 		{FullName: "Ihsan Arif", Grade: "B", Class: 1},
 		{FullName: "Tono", Grade: "A", Class: 2},
@@ -38,7 +39,7 @@ func (r StudentRepository) GetAllStudents() ([]Student, error) {
 
 func main() {
 	repository := StudentRepository{}
-	service := StudentService{repository}
+	service := StudentService{&repository}
 	Students, _ := service.GetStudent()
 	fmt.Println(Students)
 }
