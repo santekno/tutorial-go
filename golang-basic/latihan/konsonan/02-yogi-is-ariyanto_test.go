@@ -17,6 +17,11 @@ func Test_isCharacter(t *testing.T) {
 			args: args{"a"},
 			want: true,
 		},
+		{
+			name: "success validate word palindrome",
+			args: args{"p"},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
