@@ -14,7 +14,7 @@ func Test_isPalindromeWord(t *testing.T) {
 		{
 			name: "must palindrome",
 			args: args{
-				name: string("/baba/"),
+				name: string("/ada/"),
 			},
 			want: true,
 		},
@@ -25,5 +25,12 @@ func Test_isPalindromeWord(t *testing.T) {
 				t.Errorf("isPalindromeWord() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func BenchmarkIsPalindrome(b *testing.B) {
+	palindromeWordStruct := PalindromeWord{name: "saippuakivikauppias"}
+	for i := 0; i < b.N; i++ {
+		palindromeWordStruct.isPalindromeWord()
 	}
 }
