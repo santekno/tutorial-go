@@ -56,3 +56,10 @@ func Test_isPalindrome(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkPalindrome(b *testing.B) {
+	input := "katak"
+	for i := 0; i < b.N; i++ {
+		isPalindrome(input)
+	}
+}
