@@ -56,3 +56,10 @@ func Test_isVokal(t *testing.T) {
 		})
 	}
 }
+
+func BenchmarkIsVokal(b *testing.B) {
+	input := "a"
+	for i := 0; i < b.N; i++ {
+		isVokal(input)
+	}
+}
