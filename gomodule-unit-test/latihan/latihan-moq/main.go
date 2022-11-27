@@ -16,7 +16,7 @@ type StudentService struct {
 	StudentRepositoryInterface
 }
 
-func (s StudentService) GetStudent() ([]Student, error) {
+func (s *StudentService) GetStudent() ([]Student, error) {
 	Students, err := s.StudentRepositoryInterface.GetAllStudents()
 	if err != nil {
 		return nil, err
@@ -27,18 +27,18 @@ func (s StudentService) GetStudent() ([]Student, error) {
 
 type StudentRepository struct{}
 
-func (r StudentRepository) GetAllStudents() ([]Student, error) {
+func (r *StudentRepository) GetAllStudents() ([]Student, error) {
 	Students := []Student{
-		{FullName: "Ihsan Arif", Grade: "B", Class: 1},
-		{FullName: "Tono", Grade: "A", Class: 2},
-		{FullName: "Andi", Grade: "C", Class: 3},
+		{FullName: "Yogi Is Ariyanto", Grade: "B", Class: 1},
+		{FullName: "Budi", Grade: "A", Class: 2},
+		{FullName: "Agus", Grade: "C", Class: 3},
 	}
 	return Students, nil
 }
 
 func main() {
 	repository := StudentRepository{}
-	service := StudentService{repository}
+	service := StudentService{&repository}
 	Students, _ := service.GetStudent()
 	fmt.Println(Students)
 }
