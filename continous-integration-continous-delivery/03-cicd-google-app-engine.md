@@ -17,52 +17,68 @@ name: Audit Code Analysis
 
 on:
   pull_request:
-    branches: [googlecloud-gce]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 jobs:
   audit:
+    name: Verify Dependency and Build Golang
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.17
-
+        go-version: 1.15
     - name: Verify dependencies
       run: go mod verify
-
     - name: Build
       run: go build -v ./...
-
     - name: Run go vet
       run: go vet ./...
 
-    - name: Install staticcheck
-      run: go install honnef.co/go/tools/cmd/staticcheck@latest
-
-    - name: Run staticcheck
-      run: staticcheck ./...
-
   lint:
     runs-on: ubuntu-latest
+    needs: [audit]
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: 1.15
+      - uses: actions/checkout@v3
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          # Optional: version of golangci-lint to use in form of v1.2 or v1.2.3 or `latest` to use the latest version
+          version: v1.29
+
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    needs: [audit, lint]
     steps:
       - uses: actions/checkout@v2
-
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up Go
         uses: actions/setup-go@v2
         with:
           go-version: 1.17
-
-      - name: Verify dependencies
+      - name: Get Dependency
         run: go mod verify
-
-      - name: Install golint
-        run: go install golang.org/x/lint/golint@latest
-
-      - name: Run golint
-        run: golint ./...
+      - name: Run Test and Create Report
+        run: make test-coverage
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=santekno_golang-app
+            -Dsonar.tests=.
+            -Dsonar.exclusions=**/*_test.go,**/vendor/**,**/*mock*.*,**/files/**,**/docker/**,**/models/**
+            -Dsonar.go.coverage.reportPaths=cover.out
+            -Dsonar.go.tests.reportPaths=cover.out
 ```
 Pada file `audit.yaml` adalah beberapa tugas yang berjalan jika kita akan ada perubahan pada code di project kita. Agar lebih paham kita akan bahas satu persatu.
 
@@ -70,9 +86,10 @@ Pada file `audit.yaml` adalah beberapa tugas yang berjalan jika kita akan ada pe
 ```yaml
 on:
   pull_request:
-    branches: [heroku-ci]
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
 ```
-Pada yaml terdapat seperti diatas ini digunakan untuk `trigger` ketika apa saja job/task yang didefinisikan dibawah ini akan dijalankan. Kalau dilihat disini tertera bahwa akan dijalankan proses job/task dibawahnya itu ketika ada user yang membuat `Pull Request` ke dalam branch `heroku-ci`.
+Pada yaml terdapat seperti diatas ini digunakan untuk `trigger` ketika apa saja job/task yang didefinisikan dibawah ini akan dijalankan. Kalau dilihat disini tertera bahwa akan dijalankan proses job/task dibawahnya itu ketika ada user yang membuat `Pull Request`.
 
 Ketika user membuat maka otomatis semua job/task akan dijalankan untuk mengetahui semua perubahan yang sudah diubah atau diupdate code-nya oleh user tersebut.
 
@@ -184,7 +201,18 @@ Setelah semua berjalan dengan baik saatnya kita `commit` semua code changes kita
 
 ## Publish to Sonarqube
 Tahapan ini kita akan melakukan `push` code kita ke dalam `code analysis` agar bisa kita analisis mana yang berpotensi bug, unit test coverage dan yang lainnya.
-Untuk itu kita perlu pasang juga publish ke sonarqube ini di file `sonarqube.yml` dengan cara dijalankan setelah proses PR dibuat.
+Sebelum melangkah ke tahapan publish kita perlu terlebih dahulu memiliki akun (registrasi) di [sini](https://sonarcloud.io/login) jika punya github bisa registrasi pakai github account.
+Jika sudah registrasi maka akan muncul tampilan seperti ini
+![Sonarcloud Project](./sonarcloud-project.png)
+
+Maka, sekarang saatnya project kita untuk di tambahkan didalamnya. Ada beberapa cara diantaranya yaitu
+1. Import langsung dari `github` akun kita
+2. Create manual project dan organization
+Pada tutorial ini kita akan membuat langsung dari import github project. Lalu kita seleksi salah satu project di github akun kita seperti ini.
+
+[Pilih Project](./sonarcloud-seleksi-project.png)
+
+Lanjut ke sonarqube, Untuk itu kita perlu pasang juga publish ke sonarqube ini di file `sonarqube.yml` dengan cara dijalankan setelah proses PR dibuat.
 ```yaml
 name: Sonarqube Scan
 on:
@@ -241,8 +269,55 @@ sonar.organization=santekno
 ```
 
 ## Persiapan Google Cloud
+Login terlebih dahulu ke [Google Cloud](https://console.cloud.google.com/appengine)
+1. Jika baru pertama kali, biasanya dapat Free Tier selama setahun untuk mencoba
+2. Buat Project baru seperti dibawah ini
+[Create Project](./gcloud-new-project.png)
 
+3. Pilihlah di menu bar kiri `App Engine` dan enable terlebih dahulu jika masih OFF
+4. Jika sudah di `Enable` maka App Engine kita sudah bisa dipergunakan
+[App Engine Google Cloud](./gcloud-app-engine.png)
 
-
-
-
+## Memasang Deploy ke App Engine pada Github Action
+1. Buat file `deploy-cge.yml`, untuk menyimpan github-action di dalam repository kita.
+2. Tambahkan code dibawah ini pada file tersebut
+```yaml
+...
+...
+...
+deploy:
+    name: Deploying to Google Cloud
+    runs-on: ubuntu-latest
+    needs: [audit, lint, sonarcloud]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Setup Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v0.2.0
+      with:
+        project_id: ${{ secrets.GCP_PROJECT }}
+        service_account_key: ${{ secrets.GCP_CREDENTIALS }}
+    - name: Deploy to App Engine
+      id: deploy
+      uses: google-github-actions/deploy-appengine@v0.2.0
+      with:
+        deliverables: app.yaml
+        version: v1
+        project_id: ${{ secrets.GCP_PROJECT }}
+        credentials: ${{ secrets.GCP_CREDENTIALS }}
+```
+    Pada tahapan sebelumnya seperti `audit, lint, sonarcloud` ini sudah ditambahkan sebelumnya sehingga saat deploy kita akan melakukan hal yg serupa juga.
+3. Tambahkan di repository kita secrets dibawah ini
+   ```cmd
+   GCP_PROJECT=<nama project yang sudah dibuat>
+   GCP_CREDENTIALS=<iam atau service account>
+   ```
+4. Tambahkan file `app.yaml` untuk konfigurasi dari App Engine-nya. Bisa dilihat dibawah ini
+```yaml
+runtime: go115 
+service: golang-app-engine
+instance_class: B1
+basic_scaling:
+  max_instances: 1
+  idle_timeout: 10m
+```
