@@ -8,6 +8,7 @@ type Student struct {
 	Class    int    `json:"class"`
 }
 
+//go:generate moq -out student_mock_test.go . StudentRepositoryInterface
 type StudentRepositoryInterface interface {
 	GetAllStudents() ([]Student, error)
 }
