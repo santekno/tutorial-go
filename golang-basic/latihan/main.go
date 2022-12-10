@@ -11,9 +11,9 @@ check1:
 	fmt.Scanf("%s\n", &input)
 	if len(input) > 1 {
 		if isPalindrom(input) {
-			fmt.Println(input, "adalah polindrom")
+			fmt.Println(input, "adalah palindrom")
 		} else {
-			fmt.Println(input, "bukanlah polindrom")
+			fmt.Println(input, "bukanlah palindrom")
 		}
 	} else {
 		fmt.Println("Masukanlah string yang benar, minimal 2 karakter")
@@ -44,7 +44,7 @@ check2:
 }
 
 func isPalindrom(kata string) bool {
-	var hasil bool = true // Default adalah polindrom
+	var hasil bool = true // Default adalah palindrom
 	var z int = len(kata) - 1
 	for a := 0; a <= (len(kata)/2)-1; a++ { // Bandingkan depan dan belakang, dan seterusnya hingga tengah
 		if kata[a] != kata[z] { // Jika ditemukan beda
