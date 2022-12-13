@@ -1,3 +1,3 @@
-module github.com/santekno/latihanmoq
+module github.com/hendralw/tutorial-go-unit-test
 
-go 1.17
+go 1.19
