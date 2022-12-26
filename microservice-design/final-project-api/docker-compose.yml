@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  postgres:
+    container_name: "final-postgres"
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: recordings
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5432:5432
+  redis:
+    container_name: "final-redis"
+    image: redis:latest
+    ports:
+      - 6379:6379

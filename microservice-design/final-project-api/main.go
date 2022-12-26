@@ -38,10 +38,14 @@ func main() {
 	// Load redis
 	cache := config.OpenCache(os.Getenv("REDIS"), "")
 
+	// init grpc client
+	grpcUrl := os.Getenv("GRPC_ARTIST_URL")
+	artistGrpc := config.ServiceGrpcArtist(grpcUrl)
+
 	// Init clean arch
-	repository := config.InitRepository(db, cache)
-	usecase := config.InitUsecase(repository.AlbumRepository)
-	handler := config.InitHandler(usecase.AlbumUsecase)
+	repository := config.InitRepository(db, cache, artistGrpc)
+	usecase := config.InitUsecase(repository.AlbumRepository, repository.ArtistRepository)
+	handler := config.InitHandler(usecase.AlbumUsecase, usecase.ArtistUsecase)
 
 	// Create the API
 	albumRoutes := r.Group("/api/v1/albums")
@@ -52,6 +56,13 @@ func main() {
 		albumRoutes.GET("/:id", handler.AlbumHandler.Get)
 		albumRoutes.PUT("/:id", handler.AlbumHandler.Update)
 		albumRoutes.DELETE("/:id", handler.AlbumHandler.Delete)
+	}
+
+	// Create the API
+	artistRoutes := r.Group("/api/v1/artists")
+	{
+		artistRoutes.GET("/", handler.ArtistHandler.GetAll)
+		artistRoutes.GET("/:id", handler.ArtistHandler.Get)
 	}
 
 	// Run the gin gonic in port 5000

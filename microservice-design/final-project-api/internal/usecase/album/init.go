@@ -3,8 +3,9 @@ package usecase
 import (
 	"context"
 
-	"final-project-api/internal/entity"
 	albumRepository "final-project-api/internal/repository/album"
+
+	"final-project-api/internal/entity"
 )
 
 type AlbumUsecase interface {
