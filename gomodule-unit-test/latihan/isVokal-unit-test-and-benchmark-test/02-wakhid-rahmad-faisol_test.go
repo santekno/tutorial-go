@@ -18,6 +18,22 @@ func Test_isVokal(t *testing.T) {
 			},
 			want: true,
 		},
+
+		{
+			name: "menentukan konsonan",
+			args: args{
+				character: "b",
+			},
+			want: false,
+		},
+
+		{
+			name: "menentukan simbol",
+			args: args{
+				character: "!",
+			},
+			want: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
