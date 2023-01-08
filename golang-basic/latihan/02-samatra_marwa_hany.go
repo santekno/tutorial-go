@@ -11,7 +11,7 @@ func main() {
 }
 
 func vokalkosnan(input string) {
-	if input == "a" || input == "i" || input == "u" || input == "e" || input == "o" {
+	if input == "a" || input == "i" || input == "u" || input == "e" || input == "o" || input == "A" || input == "I" || input == "U" || input == "E" || input == "O" {
 		println("huruf vokal")
 	} else {
 		fmt.Println("kosonan")
