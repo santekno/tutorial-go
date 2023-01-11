@@ -11,7 +11,6 @@ func main() {
 	result := isVocalKonsonan(str)
 
 	fmt.Println(result)
-
 }
 
 func isVocalKonsonan(str string) string {
