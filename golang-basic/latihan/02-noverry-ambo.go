@@ -11,14 +11,28 @@ package main
 
 import "fmt"
 
+func isVocal(vocal string) string {
+
+	if vocal == "a" || vocal == "e" || vocal == "i" || vocal == "o" || vocal == "u" {
+		vocal = "Vokal"
+	} else {
+		vocal = "Konsonan"
+	}
+
+	return vocal
+}
+
 func main() {
 	var vocal string
 	fmt.Print("Masukkan huruf : ")
 	fmt.Scan(&vocal)
 
-	if vocal == "a" || vocal == "e" || vocal == "i" || vocal == "o" || vocal == "u" {
-		fmt.Println("Vokal.")
+	result := isVocal(vocal)
+
+	if result == "Vokal" {
+		fmt.Println("Vokal")
 	} else {
 		fmt.Println("Konsonan")
 	}
+
 }
