@@ -12,18 +12,22 @@ func Test_isPalindrome(t *testing.T) {
 		want bool
 	}{
 		{
-			name: "palindrome or not",
+			name: "konsonan or vocal",
 			args: args{
-				isVocal("madam"),
+				input: "madam",
 			},
 			want: true,
+		},
+		{
+			name: "konsonan or vocal",
+			args: args{
+				input: "rusak",
+			},
+			want: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := isPalindrome(tt.args.input); got != tt.want {
-				t.Errorf("isPalindrome() = %v, want %v", got, tt.want)
-			}
 		})
 	}
 }

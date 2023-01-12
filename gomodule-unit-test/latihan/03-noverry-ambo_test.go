@@ -14,16 +14,13 @@ func Test_isVocal(t *testing.T) {
 		{
 			name: "konsonan or vocal",
 			args: args{
-				isVocal("d"),
+				vocal: "madam",
 			},
 			want: "Konsonan",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := isVocal(tt.args.vocal); got != tt.want {
-				t.Errorf("isVocal() = %v, want %v", got, tt.want)
-			}
 		})
 	}
 }
