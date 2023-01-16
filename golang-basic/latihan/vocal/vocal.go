@@ -1,11 +1,10 @@
-package main
+package vocal
 
 import (
-	"fmt"
 	"strings"
 )
 
-func consonantOrVocal(letter string) string {
+func Vocal(letter string) string {
 	letterTolower := strings.ToLower(letter)
 	vocal := [...]string{"a", "i", "u", "e", "o"}
 
@@ -15,12 +14,5 @@ func consonantOrVocal(letter string) string {
 		}
 	}
 	return "consonant"
-
-}
-
-func main() {
-	fmt.Println(consonantOrVocal("a"))
-	fmt.Println(consonantOrVocal("k"))
-	fmt.Println(consonantOrVocal("U"))
 
 }
