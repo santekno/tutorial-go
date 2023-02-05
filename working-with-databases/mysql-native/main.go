@@ -2,21 +2,13 @@ package main
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
+	"github.com/santekno/mysql-native/services"
 )
-
-var db *sql.DB
-
-type Album struct {
-	ID     int64
-	Title  string
-	Artist string
-	Price  float32
-}
 
 func main() {
 	// Capture connection properties.
@@ -25,12 +17,14 @@ func main() {
 		Passwd:               "root",
 		Net:                  "tcp",
 		Addr:                 "127.0.0.1:3306",
-		DBName:               "recordings",
+		DBName:               "students",
 		AllowNativePasswords: true,
+		ParseTime:            true,
 	}
+
 	// Get a database handle.
 	var err error
-	db, err = sql.Open("mysql", cfg.FormatDSN())
+	db, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,147 +35,77 @@ func main() {
 	}
 	fmt.Println("Connected!")
 
-	// albums, err := albumsByArtist("Peterpan")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Printf("Albums found: %v\n", albums)
+	service := services.InitServices(db)
 
-	// for _, album := range albums {
-	// 	log.Printf("Title  : %s\n", album.Title)
-	// 	log.Printf("Artist : %s\n", album.Artist)
-	// 	log.Printf("Price  : %f\n", album.Price)
-	// }
-
-	// Hard-code ID 2 here to test the query.
-	// alb, err := albumByID(2)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Printf("Album found: %v\n", alb)
-
-	// albID, sumAffected, err := addAlbum(Album{
-	// 	Title:  "Taman Langit",
-	// 	Artist: "Peterpan",
-	// 	Price:  50000.0,
-	// })
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Printf("ID of added album: %v\n", albID)
-	// fmt.Printf("Sum affected %d\n", sumAffected)
-
-	// // insert data bulk using transaction model
-	// albumIDs, err := BulkInsertUsingTransaction()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Printf("ID of added album: %v\n", albumIDs)
-}
-
-// albumsByArtist queries for albums that have the specified artist name.
-func albumsByArtist(name string) ([]Album, error) {
-	var albums []Album
-
-	rows, err := db.Query("SELECT * FROM album WHERE artist = ?", name)
-	if err != nil {
-		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var alb Album
-		if err := rows.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price); err != nil {
-			return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
-		}
-		albums = append(albums, alb)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
-	}
-	return albums, nil
-}
-
-func albumByID(id int64) (Album, error) {
-	var alb Album
-
-	row := db.QueryRow("SELECT * FROM album WHERE id = ?", id)
-	if err := row.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price); err != nil {
-		if err == sql.ErrNoRows {
-			return alb, fmt.Errorf("albumsById %d: no such album", id)
-		}
-		return alb, fmt.Errorf("albumsById %d: %v", id, err)
-	}
-	return alb, nil
-}
-
-func addAlbum(alb Album) (int64, int64, error) {
-	result, err := db.Exec("INSERT INTO album (title, artist, price) VALUES (?, ?, ?)", alb.Title, alb.Artist, alb.Price)
-	if err != nil {
-		return 0, 0, fmt.Errorf("addAlbum: %v", err)
-	}
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, 0, fmt.Errorf("addAlbum: %v", err)
-	}
-
-	sum, err := result.RowsAffected()
-	if err != nil {
-		return 0, 0, fmt.Errorf("error when getting rows affected")
-	}
-
-	return id, sum, nil
-}
-
-func BulkInsertUsingTransaction() ([]int64, error) {
-	var insertID []int64
-
-	tx, err := db.Begin()
-	if err != nil {
-		return insertID, fmt.Errorf("album transaction error")
-	}
-
-	defer tx.Rollback()
-
-	albums := []Album{
+	/*
+	* BulkInsertMahasiswa
+	*
+	 */
+	mahasiswaBulk := []services.Mahasiswa{
 		{
-			Title:  "Hari Yang Cerah",
-			Artist: "Peterpan",
-			Price:  50000,
+			Nama:         "Ihsan",
+			NIM:          "ABC001",
+			JenisKelamin: 1,
+			TempatLahir:  "Tasikmalaya",
+			TanggalLahir: time.Date(1992, 10, 2, 0, 0, 0, 0, time.Local),
+			TahunMasuk:   2020,
 		},
 		{
-			Title:  "Sebuah Nama Sebuah Cerita",
-			Artist: "Peterpan",
-			Price:  50000,
+			Nama:         "Arif",
+			NIM:          "ABC002",
+			JenisKelamin: 1,
+			TempatLahir:  "Tasikmalaya",
+			TanggalLahir: time.Date(1992, 10, 3, 0, 0, 0, 0, time.Local),
+			TahunMasuk:   2020,
 		},
 		{
-			Title:  "Bintang Di surga",
-			Artist: "Peterpan",
-			Price:  60000,
+			Nama:         "Rahman",
+			NIM:          "ABC003",
+			JenisKelamin: 1,
+			TempatLahir:  "Tasikmalaya",
+			TanggalLahir: time.Date(1992, 10, 4, 0, 0, 0, 0, time.Local),
+			TahunMasuk:   2020,
 		},
 	}
 
-	for _, album := range albums {
-		result, err := tx.Exec("INSERT INTO album (title, artist, price) VALUES (?, ?, ?)", album.Title, album.Artist, album.Price)
-		if err != nil {
-			log.Printf("error : %v", err)
-			continue
-		}
-
-		lastInsertId, err := result.LastInsertId()
-		if err != nil {
-			log.Printf("error : %v", err)
-		}
-
-		insertID = append(insertID, lastInsertId)
-		return insertID, errors.New("error")
-	}
-
-	err = tx.Commit()
+	mahasiswaIDs, err := service.BulkInsertUsingTransaction(mahasiswaBulk)
 	if err != nil {
-		log.Printf("error : %v", err)
-		return insertID, err
+		log.Fatal(err)
 	}
 
-	return insertID, err
+	fmt.Printf("ID of added mahasiswa: %v\n", mahasiswaIDs)
+
+	/*
+	* Get MahasiswaById
+	* hardcoded id = 2
+	 */
+	mhs, err := service.GetMahasiswaById(2)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Mahasiswa found: %v\n", mhs)
+
+	/*
+	* Get All Mahasiswa
+	*
+	 */
+	mahasiswas, err := service.GetAllMahasiswa()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("mahasiswas found: %v\n", mahasiswas)
+
+	for _, mhs := range mahasiswas {
+		log.Printf("Nama  : %s\n", mhs.Nama)
+		log.Printf("NIM : %s\n", mhs.NIM)
+		log.Printf("Jenis Kelamin  : %d\n", mhs.JenisKelamin)
+		log.Printf("Tempat Lahir  : %s\n", mhs.TempatLahir)
+		log.Printf("Tanggal lahir : %v\n", mhs.TanggalLahir)
+		log.Printf("Tahun Masuk : %d\n", mhs.TahunMasuk)
+	}
+
+	err = service.DeleteMahasiswa(mahasiswas[0].ID)
+	if err != nil {
+		log.Fatal(err)
+	}
 }

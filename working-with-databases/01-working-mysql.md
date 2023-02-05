@@ -39,19 +39,6 @@ Pada saat ini kita akan membuat program dalam 1 file `main` saja belum melakukan
 
 Pada program ini sederhana sehingga kita hanya perlu membutuhkan 1 file `main.go` saja untuk mengoperasikan semua yang akan kita lakukan.
 
-Buat file `main.go` pada projek dan program tersebut kita perlu inisialisasi database connection yang bisa dilihat seperti dibawah ini.
-```go
-var db *sql.DB
-```
-Lalu berikutnya kita akan menyimpan data tersebut dalam `struct` seperti ini.
-```go
-type Album struct {
-    ID     int64
-    Title  string
-    Artist string
-    Price  float32
-}
-```
 Selanjutnya pada fungsi `main()` kita akan membagi menjadi beberapa bagian diantaranya yaitu sebagai berikut.
 
 ### Inisialisasi Koneksi Database
@@ -62,7 +49,7 @@ cfg := mysql.Config{
     Passwd: os.Getenv("DBPASS"),
     Net:    "tcp",
     Addr:   "127.0.0.1:3306",
-    DBName: "recordings",
+    DBName: "mahasiswa",
 }
 ```
 Pada dependency `mysql` ini ada beberapa konfigurasi yang lebih lengkap bisa kita lihat pada dokumentasi dari dependency tersebut.
@@ -139,76 +126,181 @@ Pada fungsi `sql.Open("mysql",cfg.FormatDNS())` ini digunakan untuk melakukan ko
 
 Lalu fungsi `db.Ping()` ini digunakan untuk memastikan bahwa koneksi tersebut sudah bisa digunakan untuk mengambil, menyimpan, bahkan melakukan penghapusan data ke dalam database.
 
-### Mengambil data Album By Artis dari Database
-Pada tahapan selanjutnya kita akan membuat fungsi untuk mengambil data dari database, yang mana pada pertemuan kali ini database yang sudah tersedia adalah data album berdasarkan artis.
+### Inisialisasi Service Package
+Pada tahap ini kita akan membuat folder service untuk memisahkan semua logic query kita ke dalam satu package.
+* Buat folder `service`
+* Tambahkan file dengan nama file `init.go` dan buatlah isi dari file tersebut seperti dibawah ini.
+```go
+package services
+
+import "database/sql"
+
+type Services struct {
+	db *sql.DB
+}
+
+func InitServices(db *sql.DB) Services {
+	return Services{
+		db: db,
+	}
+}
+```
+Maksud pembuatan dari fungsi ini `InitServices` adalah agar kita bisa menggunakan connection yang telah diinisialisasi di `main` proses ke dalam package `services` kita. Sehingga nantinya kita cukup membuat method-method dan menggunakan `db` ini di setiap method.nya.
+
+Jangan lupa ketika sudah melakukan inisialisasi fungsi tersebut maka lakukan juga pemanggilan fungsi tersebut di dalam file `main.go` seperti dibawah ini.
+```go
+	service := services.InitServices(db)
+```
+
+### Mengambil data Semua Mahasiswa dari Database
+Pada tahapan selanjutnya kita akan membuat fungsi untuk mengambil data dari database, yang mana pada pertemuan kali ini database yang sudah tersedia adalah semua data mahasiswa.
 
 Fungsi ini akan mengambil data dari database lalu menyimpannya dalam bentuk `struct` yang sudah kita deklarasi sebelumnya.
-```go
-func albumsByArtist(name string) ([]Album, error) {
-	var albums []Album
 
-	rows, err := db.Query("SELECT * FROM album WHERE artist = ?", name)
+```go
+func (s *Services) GetAllMahasiswa() ([]Mahasiswa, error) {
+	var mahasiswas []Mahasiswa
+
+	rows, err := s.db.Query("SELECT id, nama, jenis_kelamin, tempat_lahir, tanggal_lahir, tahun_masuk FROM mahasiswa")
 	if err != nil {
-		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
+		return nil, fmt.Errorf("failed get all mahasiswa %v", err)
 	}
+
 	defer rows.Close()
 
 	for rows.Next() {
-		var alb Album
-		if err := rows.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price); err != nil {
-			return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
+		var mhs Mahasiswa
+		if err := rows.Scan(&mhs.ID, &mhs.Nama, &mhs.JenisKelamin, &mhs.TempatLahir, &mhs.TanggalLahir, &mhs.TahunMasuk); err != nil {
+			return nil, fmt.Errorf("failed get all mahasiswa %v", err)
 		}
-		albums = append(albums, alb)
+		mahasiswas = append(mahasiswas, mhs)
 	}
-	
-  if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("albumsByArtist %q: %v", name, err)
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("failed rows: %v", err)
 	}
-	return albums, nil
+
+	return mahasiswas, nil
 }
 ```
-Pada fungsi `db.Query("SELECT * FROM album WHERE artist = ?", name)` digunakan untuk mentranslate query dan mengambil data dari database sesuai dengan operasi.
+Pada fungsi `s.db.Query("SELECT id, nama, jenis_kelamin, tempat_lahir, tanggal_lahir, tahun_masuk FROM mahasiswa")` digunakan untuk mentranslate query dan mengambil data dari database sesuai dengan operasi.
 
-Pada fungsi `rows.Next()` digunakan untuk mem-`fetch` data dari variabel `rows` lalu di translate ke dalam struct `Album`.
-
-Kita juga perlu melakukan `defer rows.Close()` agar setiap koneksi yang di deklarasi diakhir eksekusi harus di tutup agar terhindar dari max connection ke dalam database.
+Pada fungsi `rows.Next()` digunakan untuk mem-`fetch` data dari variabel `rows` lalu di translate ke dalam struct `Mahasiswa`. Kita juga perlu melakukan `defer rows.Close()` agar setiap koneksi yang di deklarasi diakhir eksekusi harus di tutup agar terhindar dari `max connection` ke dalam database.
 
 Selanjutnya, jangan lupa juga untuk melakukan pengecekan apakah `err` dan `rows.Err()` memiliki error agar kita tahu bahwa query tersebut terdapat error atau tidak.
 
-### Mengambil data Album
-Sama halnya dengan mengambil data album by artis diatas tetapi yang berbeda hanyalah return dari fungsi ini. Berikut ini fungsi untuk mengambil data album.
+### Mengambil data Mahasiswa By ID
+Sama halnya dengan mengambil data mahasiswa by id diatas tetapi yang berbeda hanyalah return dari fungsi ini. Berikut ini fungsi untuk mengambil data.
 ```go
-func albumByID(id int64) (Album, error) {
-	// An album to hold data from the returned row.
-	var alb Album
+func (s *Services) GetMahasiswaById(id int64) (Mahasiswa, error) {
+	var mhs Mahasiswa
 
-	row := db.QueryRow("SELECT * FROM album WHERE id = ?", id)
-	if err := row.Scan(&alb.ID, &alb.Title, &alb.Artist, &alb.Price); err != nil {
+	row := s.db.QueryRow("SELECT id,nama,nim,jenis_kelamin,tempat_lahir,tanggal_lahir,tahun_masuk FROM mahasiswa WHERE id = ?", id)
+	if err := row.Scan(&mhs.ID, &mhs.Nama, &mhs.NIM, &mhs.JenisKelamin, &mhs.TempatLahir, &mhs.TanggalLahir, &mhs.TahunMasuk); err != nil {
 		if err == sql.ErrNoRows {
-			return alb, fmt.Errorf("albumsById %d: no such album", id)
+			return mhs, fmt.Errorf("failed get mahasiswa by id %d: no such mahasiswa", id)
 		}
-		return alb, fmt.Errorf("albumsById %d: %v", id, err)
+
+		return mhs, fmt.Errorf("failed get mahasiswa by id %d: %v", id, err)
 	}
-	return alb, nil
+
+	return mhs, nil
 }
 ```
-Perbedaan dari `albumsByArtist` yaitu pada data album disini menggunakan `db.QueryRow("SELECT * FROM album WHERE id = ?", id)` yang mana fungsi ini mengembalikan data hanya satu baris.
+
+Perbedaan dari `get mahasiswa` yaitu pada data mahasiswa disini menggunakan `s.db.QueryRow("SELECT id,nama,nim,jenis_kelamin,tempat_lahir,tanggal_lahir,tahun_masuk FROM mahasiswa WHERE id = ?", id)` yang mana fungsi ini mengembalikan data hanya satu baris.
 
 Pada fungsi ini juga kita menemukan `sql.ErrNoRows` digunakan untuk melakukan pengecekan dan memastikan bahwa data yang diambil itu tidak kosong.
 
-### Menambahkan Album
-Selanjutnya kita akan menambahkan album ke dalam database. Berikut ini fungsi untuk menyimpan data ke dalam database.
+### Menambahkan Mahasiswa
+Selanjutnya kita akan menambahkan mahasiswa ke dalam database. Berikut ini fungsi untuk menyimpan data ke dalam database.
 ```go
-func addAlbum(alb Album) (int64, error) {
-	result, err := db.Exec("INSERT INTO album (title, artist, price) VALUES (?, ?, ?)", alb.Title, alb.Artist, alb.Price)
+func (s *Services) AddMahasiswa(mhs Mahasiswa) (int64, int64, error) {
+	result, err := s.db.Exec("INSERT INTO mahasiswa (nama,nim, jenis_kelamin, tempat_lahir, tanggal_lahir, tahun_masuk) VALUES (?, ?, ?, ?, ?, ?)", mhs.Nama, mhs.NIM, mhs.JenisKelamin, mhs.TempatLahir, mhs.TanggalLahir, mhs.TahunMasuk)
 	if err != nil {
-		return 0, fmt.Errorf("addAlbum: %v", err)
+		return 0, 0, fmt.Errorf("failed add mahasiswa: %v", err)
 	}
 	id, err := result.LastInsertId()
 	if err != nil {
-		return 0, fmt.Errorf("addAlbum: %v", err)
+		return 0, 0, fmt.Errorf("failed add mahasiswa: %v", err)
 	}
-	return id, nil
+
+	sum, err := result.RowsAffected()
+	if err != nil {
+		return 0, 0, fmt.Errorf("error when getting rows affected")
+	}
+
+	return id, sum, nil
 }
 ```
-Fungsi `db.Exec("INSERT INTO album (title, artist, price) VALUES (?, ?, ?)", alb.Title, alb.Artist, alb.Price)` berfungsi untuk melakukan query `insert` ke dalam databas sehingga data yang dikirim bisa disimpan ke dalam database.
+
+Fungsi `s.db.Exec("INSERT INTO mahasiswa (nama,nim, jenis_kelamin, tempat_lahir, tanggal_lahir, tahun_masuk) VALUES (?, ?, ?, ?, ?, ?)", mhs.Nama, mhs.NIM, mhs.JenisKelamin, mhs.TempatLahir, mhs.TanggalLahir, mhs.TahunMasuk)` berfungsi untuk melakukan query `insert` ke dalam databas sehingga data yang dikirim bisa disimpan ke dalam database.
+
+### Menghapus Mahasiswa
+Selanjutnya kita akan menghapus mahasiswa dari dalam database. Berikut ini fungsi untuk menghapus data ke dalam database.
+```go
+func (s *Services) DeleteMahasiswa(mhsId int64) error {
+	if mhsId == 0 {
+		return errors.New("mahasiswa ID was zero")
+	}
+
+	_, err := s.db.Exec("DELETE FROM mahasiswa WHERE id= ?", mhsId)
+	if err != nil {
+		log.Printf("error execution : %v", err)
+		return err
+	}
+
+	return nil
+}
+```
+Perintah untuk menghapus data mahasiswa dalam database sama halnya dengan tambah yaitu menggunakan fungsi `s.db.Exec` hanya yang membedakan yaitu pada query yang digunakan saja yaitu `DELETE FROM mahasiswa WHERE id=?`.
+
+### Menambahkan Mahasiswa menggunakan Transaction Batching
+Biasanya kita kadang membutuhkan operasi untuk menyimpan data mahasiswa secara bulk (langsung banyak) agar mengefisienkan waktu saat pengisian data dibandingkan dengan satu persatu mengisi data mahasiswanya. Maka kita perlu membuatkan suatu method yang bisa mendukung batching data ke mahasiswa ke dalam database. Berikut ini bagaimana kita membuat method khusus untuk batching.
+```go
+func (s *Services) BulkInsertUsingTransaction(mahasiswas []Mahasiswa) ([]int64, error) {
+	var insertID []int64
+
+	if len(mahasiswas) == 0 {
+		return insertID, errors.New("mahasiswa record was empty")
+	}
+
+	tx, err := s.db.Begin()
+	if err != nil {
+		return insertID, errors.New("begin mahasiswa transaction error")
+	}
+
+	defer tx.Rollback()
+
+	for _, mhs := range mahasiswas {
+		result, err := tx.Exec("INSERT INTO mahasiswa (nama, nim, jenis_kelamin, tempat_lahir, tanggal_lahir, tahun_masuk) VALUES (?, ?, ?, ?, ?, ?)", mhs.Nama, mhs.NIM, mhs.JenisKelamin, mhs.TempatLahir, mhs.TanggalLahir, mhs.TahunMasuk)
+		if err != nil {
+			log.Printf("error execution : %v", err)
+			continue
+		}
+
+		lastInsertId, err := result.LastInsertId()
+		if err != nil {
+			log.Printf("error last insert : %v", err)
+		}
+
+		insertID = append(insertID, lastInsertId)
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("error commit : %v", err)
+		return insertID, err
+	}
+
+	return insertID, err
+}
+```
+
+Ada beberapa catatan saat kita menggunakan `transaction` database diantaranya
+* Pada awal method menggunakan `s.db.Begin()` ini dimaksudkan agar kita menginisialisasi proses transaksi ke dalam database yang mana pada saat ini kita mengalokasikan koneksi database khusus untuk transaksi ini.
+* Penggunaan `defer tx.Rollback()` digunakan agar saat ada data ditengah atau dibagian data tertentu ada yang membuat error sehingga data tidak masuk ke dalam database, maka tiap transaksi tersebut akan dikembalikan ke semula atau biasanya disebut `rollback`.
+* Penggunaan `tx.Commit()` digunakan untuk mengakhiri semua proses transaksi ke dalam databas sehingga semua data akan langsung disimpan ke dalam database.
+
+Sudah pahamkah kita bagaimana mengoperasikan semua dan mengkomunikasikan datanya ke dalam database?
+Semoga saja teman-teman bisa memahami semua yang sudah dijelaskan pertahapannya di tutorial ini.
