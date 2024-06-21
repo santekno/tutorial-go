@@ -8,21 +8,13 @@ type Student struct {
 	Class    int    `json:"class"`
 }
 
+//go:generate moq -out main_mock_test.go . StudentRepositoryInterface
 type StudentRepositoryInterface interface {
 	GetAllStudents() ([]Student, error)
 }
 
 type StudentService struct {
 	StudentRepositoryInterface
-}
-
-func (s StudentService) GetStudent() ([]Student, error) {
-	Students, err := s.StudentRepositoryInterface.GetAllStudents()
-	if err != nil {
-		return nil, err
-	}
-
-	return Students, nil
 }
 
 type StudentRepository struct{}
@@ -33,6 +25,15 @@ func (r StudentRepository) GetAllStudents() ([]Student, error) {
 		{FullName: "Tono", Grade: "A", Class: 2},
 		{FullName: "Andi", Grade: "C", Class: 3},
 	}
+	return Students, nil
+}
+
+func (s StudentService) GetStudent() ([]Student, error) {
+	Students, err := s.StudentRepositoryInterface.GetAllStudents()
+	if err != nil {
+		return nil, err
+	}
+
 	return Students, nil
 }
 
